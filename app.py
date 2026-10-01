@@ -224,8 +224,9 @@ def perfume_details(product_id):
 
 app = Flask(__name__)
 app.config["MAX_CONTENT_LENGTH"] = 16 * 1024
+default_database = "/tmp/orders.sqlite3" if os.environ.get("VERCEL") else str(Path(app.instance_path) / "orders.sqlite3")
 app.config["DATABASE"] = os.environ.get(
-    "ARAMS_DATABASE", str(Path(app.instance_path) / "orders.sqlite3")
+    "ARAMS_DATABASE", default_database
 )
 WHATSAPP_NUMBER = re.sub(r"\D", "", os.environ.get("ARAMS_WHATSAPP", "8801815653564"))
 
