@@ -245,6 +245,18 @@ const premiumBags = Array.from({ length: premiumBagNames.length }, (_, index) =>
 }));
 products.push(...premiumBags);
 
+function removeRepeatedProductImages(productList) {
+  const seenImages = new Set();
+  const uniqueProducts = productList.filter((product) => {
+    if (!product.image || seenImages.has(product.image)) return false;
+    seenImages.add(product.image);
+    return true;
+  });
+  productList.splice(0, productList.length, ...uniqueProducts);
+}
+
+removeRepeatedProductImages(products);
+
 const numberFormat = new Intl.NumberFormat("en-BD");
 const currency = { format: (amount) => `৳${numberFormat.format(amount)}` };
 const grid = document.querySelector("#product-grid");
@@ -274,6 +286,18 @@ function visibleProducts() {
   return result;
 }
 
+function productDetailsUrl(product) {
+  const query = new URLSearchParams({
+    id: product.id,
+    name: product.name,
+    price: String(product.price),
+    color: product.color,
+    description: product.description,
+    image: product.image,
+  });
+  return `/product/${encodeURIComponent(product.id)}?${query}`;
+}
+
 function renderProducts() {
   const items = visibleProducts();
   document.querySelector("#item-total").textContent = `${String(items.length).padStart(2, "0")} products`;
@@ -287,8 +311,9 @@ function renderProducts() {
           <button class="buy-now" type="button" data-buy="${product.id}">Buy now <span aria-hidden="true">→</span></button>
         </div>
       </div>
-      <div class="product-meta"><h3 class="product-name">${product.name}</h3><p class="product-price">${currency.format(product.price)}</p></div>
+      <div class="product-meta"><h3 class="product-name"><a href="${productDetailsUrl(product)}">${product.name}</a></h3><p class="product-price">${currency.format(product.price)}</p></div>
       <p class="product-description">${product.description} · ${product.groups[0]}</p>
+      <a class="product-detail-link" href="${productDetailsUrl(product)}">View details <span aria-hidden="true">↗</span></a>
     </article>`).join("");
 }
 
@@ -303,8 +328,9 @@ function renderCollection(collectionGrid, category) {
           <button class="buy-now" type="button" data-buy="${product.id}">Buy now <span aria-hidden="true">→</span></button>
         </div>
       </div>
-      <div class="product-meta"><h3 class="product-name">${product.name}</h3><p class="product-price">${currency.format(product.price)}</p></div>
+      <div class="product-meta"><h3 class="product-name"><a href="${productDetailsUrl(product)}">${product.name}</a></h3><p class="product-price">${currency.format(product.price)}</p></div>
       <p class="product-description">${product.description} · ${product.groups[0]}</p>
+      <a class="product-detail-link" href="${productDetailsUrl(product)}">View details <span aria-hidden="true">↗</span></a>
     </article>`).join("");
 }
 
@@ -405,14 +431,74 @@ function handleProductAction(event) {
   showToast(`${product.name} added to your bag`);
 }
 
-grid.addEventListener("click", handleProductAction);
-watchGrid.addEventListener("click", handleProductAction);
-sunglassesGrid.addEventListener("click", handleProductAction);
-trousersGrid.addEventListener("click", handleProductAction);
-pantsGrid.addEventListener("click", handleProductAction);
-perfumesGrid.addEventListener("click", handleProductAction);
-polosGrid.addEventListener("click", handleProductAction);
-bagsGrid.addEventListener("click", handleProductAction);
+function handleProductCardNavigation(event) {
+  if (event.target.closest("button, a, input, textarea, select, label")) return;
+
+  const card = event.target.closest(".product-card");
+  if (!card) return;
+
+  const detailLink = card.querySelector(".product-name a, .product-detail-link");
+  if (detailLink) {
+    window.location.href = detailLink.href;
+  }
+}
+
+grid.addEventListener("click", (event) => {
+  if (event.target.closest("[data-add], [data-buy]")) {
+    handleProductAction(event);
+    return;
+  }
+  handleProductCardNavigation(event);
+});
+watchGrid.addEventListener("click", (event) => {
+  if (event.target.closest("[data-add], [data-buy]")) {
+    handleProductAction(event);
+    return;
+  }
+  handleProductCardNavigation(event);
+});
+sunglassesGrid.addEventListener("click", (event) => {
+  if (event.target.closest("[data-add], [data-buy]")) {
+    handleProductAction(event);
+    return;
+  }
+  handleProductCardNavigation(event);
+});
+trousersGrid.addEventListener("click", (event) => {
+  if (event.target.closest("[data-add], [data-buy]")) {
+    handleProductAction(event);
+    return;
+  }
+  handleProductCardNavigation(event);
+});
+pantsGrid.addEventListener("click", (event) => {
+  if (event.target.closest("[data-add], [data-buy]")) {
+    handleProductAction(event);
+    return;
+  }
+  handleProductCardNavigation(event);
+});
+perfumesGrid.addEventListener("click", (event) => {
+  if (event.target.closest("[data-add], [data-buy]")) {
+    handleProductAction(event);
+    return;
+  }
+  handleProductCardNavigation(event);
+});
+polosGrid.addEventListener("click", (event) => {
+  if (event.target.closest("[data-add], [data-buy]")) {
+    handleProductAction(event);
+    return;
+  }
+  handleProductCardNavigation(event);
+});
+bagsGrid.addEventListener("click", (event) => {
+  if (event.target.closest("[data-add], [data-buy]")) {
+    handleProductAction(event);
+    return;
+  }
+  handleProductCardNavigation(event);
+});
 
 document.querySelector("#bag-items").addEventListener("click", (event) => {
   const changeButton = event.target.closest("[data-change]");

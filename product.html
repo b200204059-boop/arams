@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Product details from ARAMS.">
+  <title>Product | ARAMS</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/styles.css">
+  <script src="/product.js" defer></script>
+</head>
+<body class="product-page-body">
+  <div class="announcement">ARAMS PRODUCT EDIT · DELIVERY ACROSS BANGLADESH</div>
+  <header class="site-header product-page-header">
+    <a class="wordmark" href="/" aria-label="ARAMS home">ARAMS<span>.</span></a>
+    <nav class="product-page-nav" aria-label="Product navigation">
+      <a href="/">Shop</a>
+      <a href="/#shop">Collection</a>
+      <a href="/buy">Cart</a>
+    </nav>
+  </header>
+
+  <main class="product-page-shell">
+    <div class="product-breadcrumb"><a href="/">Home</a><span>/</span><strong id="product-breadcrumb-name">Product</strong></div>
+    <section class="product-detail-layout" aria-live="polite">
+      <div class="product-gallery">
+        <div class="product-main-image">
+          <img id="product-image" alt="">
+          <span class="product-gallery-badge">ARAMS edit</span>
+        </div>
+      </div>
+      <div class="product-detail-copy">
+        <p class="eyebrow">Everyday selection</p>
+        <h1 id="product-name">Product</h1>
+        <div class="product-price-block"><strong id="product-price">&#2547;0</strong><span id="product-color">Available now</span></div>
+        <p class="product-lead" id="product-description">Product details from ARAMS.</p>
+        <div class="product-offer"><strong>CASH ON DELIVERY</strong><span>Delivery across Bangladesh. Confirm your delivery details with ARAMS on WhatsApp.</span></div>
+        <form class="product-order-form" id="product-order-form">
+          <label>Quantity<select name="quantity"><option value="1">1</option><option value="2">2</option><option value="3">3</option></select></label>
+          <button class="product-buy-button" type="submit">Order on WhatsApp <span aria-hidden="true">&#8594;</span></button>
+        </form>
+        <div class="product-benefits">
+          <div><strong>01</strong><span>Authentic ARAMS catalog listing</span></div>
+          <div><strong>02</strong><span>Easy WhatsApp ordering</span></div>
+          <div><strong>03</strong><span>Delivery details confirmed before dispatch</span></div>
+        </div>
+        <details open><summary>Product details</summary><p id="product-details-text">Product details from ARAMS.</p></details>
+      </div>
+    </section>
+  </main>
+  <div class="product-toast" id="product-toast" role="status" aria-live="polite"></div>
+</body>
+</html>

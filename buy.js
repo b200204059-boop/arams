@@ -165,6 +165,18 @@ products.push(...Array.from({ length: premiumBagNames.length }, (_, index) => ({
   description: "Premium finish for work, travel, and weekends"
 })));
 
+function removeRepeatedProductImages(productList) {
+  const seenImages = new Set();
+  const uniqueProducts = productList.filter((product) => {
+    if (!product.image || seenImages.has(product.image)) return false;
+    seenImages.add(product.image);
+    return true;
+  });
+  productList.splice(0, productList.length, ...uniqueProducts);
+}
+
+removeRepeatedProductImages(products);
+
 const formatMoney = new Intl.NumberFormat("en-BD");
 const money = (amount) => `৳${formatMoney.format(amount)}`;
 const cart = new Map();
@@ -174,9 +186,21 @@ const summaryTotal = document.querySelector("#summary-total");
 const toast = document.querySelector("#toast");
 let toastTimer;
 
+function productDetailsUrl(product) {
+  const query = new URLSearchParams({
+    id: product.id,
+    name: product.name,
+    price: String(product.price),
+    color: product.color,
+    description: product.description,
+    image: product.image,
+  });
+  return `/product/${encodeURIComponent(product.id)}?${query}`;
+}
+
 function renderProducts() {
   grid.innerHTML = products.map((product) => `
-    <article class="product-card buy-card">
+    <article class="product-card buy-card" data-product-id="${product.id}">
       <div class="product-image-wrap">
         <img class="product-image" src="${product.image}" alt="${product.name}" loading="lazy">
         <div class="product-actions">
@@ -185,10 +209,11 @@ function renderProducts() {
         </div>
       </div>
       <div class="product-meta">
-        <h3 class="product-name">${product.name}</h3>
+        <h3 class="product-name"><a href="${productDetailsUrl(product)}">${product.name}</a></h3>
         <p class="product-price">${money(product.price)}</p>
       </div>
       <p class="product-description">${product.description} · ${product.color}</p>
+      <a class="product-detail-link" href="${productDetailsUrl(product)}">View details <span aria-hidden="true">↗</span></a>
     </article>
   `).join("");
 }
@@ -243,7 +268,20 @@ function updateFromBagButtons(event) {
   }
 }
 
-grid.addEventListener("click", updateFromBagButtons);
+grid.addEventListener("click", (event) => {
+  if (event.target.closest("[data-add], [data-buy]")) {
+    updateFromBagButtons(event);
+    return;
+  }
+
+  const card = event.target.closest(".product-card");
+  if (!card) return;
+
+  const detailLink = card.querySelector(".product-name a, .product-detail-link");
+  if (detailLink) {
+    window.location.href = detailLink.href;
+  }
+});
 
 document.querySelector("#buy-form").addEventListener("submit", async (event) => {
   event.preventDefault();

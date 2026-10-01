@@ -229,6 +229,29 @@ app.config["DATABASE"] = os.environ.get(
     "ARAMS_DATABASE", default_database
 )
 WHATSAPP_NUMBER = re.sub(r"\D", "", os.environ.get("ARAMS_WHATSAPP", "8801815653564"))
+ADMIN_USERNAME = os.environ.get("ARAMS_ADMIN_USERNAME", "admin")
+ADMIN_PASSWORD = os.environ.get("ARAMS_ADMIN_PASSWORD")
+
+
+def require_admin_auth():
+    if not ADMIN_PASSWORD:
+        return None
+
+    auth = request.authorization
+    if auth is None or auth.username != ADMIN_USERNAME or auth.password != ADMIN_PASSWORD:
+        response = jsonify({"error": "Admin authentication required."})
+        response.status_code = 401
+        response.headers["WWW-Authenticate"] = 'Basic realm="Admin"'
+        return response
+    return None
+
+
+@app.before_request
+def enforce_admin_access():
+    if request.path.startswith("/admin") or (request.path == "/api/orders" and request.method == "GET"):
+        auth_error = require_admin_auth()
+        if auth_error is not None:
+            return auth_error
 
 
 def initialize_database():
@@ -256,7 +279,44 @@ def initialize_database():
         connection.close()
 
 
+def list_orders(limit=50):
+    connection = sqlite3.connect(app.config["DATABASE"])
+    try:
+        rows = connection.execute(
+            """
+            SELECT reference, customer_name, customer_phone, customer_email,
+                   delivery_notes, items_json, total, status, created_at
+            FROM orders
+            ORDER BY created_at DESC, rowid DESC
+            LIMIT ?
+            """,
+            (limit,),
+        ).fetchall()
+    finally:
+        connection.close()
+
+    orders = []
+    for row in rows:
+        reference, customer_name, customer_phone, customer_email, delivery_notes, items_json, total, status, created_at = row
+        orders.append({
+            "reference": reference,
+            "customer_name": customer_name,
+            "customer_phone": customer_phone,
+            "customer_email": customer_email,
+            "delivery_notes": delivery_notes,
+            "items": json.loads(items_json or "[]"),
+            "total": total,
+            "status": status,
+            "created_at": created_at,
+        })
+    return orders
+
+
 def clean_field(value, field, maximum, required=True):
+    if value is None:
+        if required:
+            raise ValueError(f"{field} is required.")
+        return ""
     if not isinstance(value, str):
         raise ValueError(f"{field} must be text.")
     value = value.strip()
@@ -334,6 +394,28 @@ def make_whatsapp_url(reference, customer, items, total):
     return f"https://wa.me/{WHATSAPP_NUMBER}?{urlencode({'text': chr(10).join(message_lines)})}"
 
 
+@app.get("/api/health")
+def health_check():
+    return jsonify({
+        "status": "ok",
+        "database": app.config["DATABASE"],
+        "products": len(PRODUCTS),
+    })
+
+
+@app.get("/api/orders")
+def list_orders_endpoint():
+    orders = list_orders(limit=100)
+    return jsonify({"orders": orders})
+
+
+@app.errorhandler(404)
+def not_found(error):
+    if request.path.startswith("/api/"):
+        return jsonify({"error": "Not found."}), 404
+    return error
+
+
 @app.get("/")
 def home():
     return send_from_directory(BASE_DIR, "index.html")
@@ -344,14 +426,25 @@ def buy_page():
     return send_from_directory(BASE_DIR, "buy.html")
 
 
+@app.get("/admin")
+@app.get("/admin/orders")
+def admin_orders_page():
+    return send_from_directory(BASE_DIR, "admin_orders.html")
+
+
 @app.get("/watch/casio-a159wa")
 def casio_product_page():
     return send_from_directory(BASE_DIR, "casio.html")
 
 
+@app.get("/product/<product_id>")
+def product_page(product_id):
+    return send_from_directory(BASE_DIR, "product.html")
+
+
 @app.get("/<path:filename>")
 def frontend_asset(filename):
-    if filename not in {"app.js", "buy.js", "styles.css", "buy.html", "casio.html"}:
+    if filename not in {"app.js", "buy.js", "styles.css", "buy.html", "casio.html", "product.html", "product.js"}:
         abort(404)
     return send_from_directory(BASE_DIR, filename)
 

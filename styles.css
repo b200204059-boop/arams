@@ -62,10 +62,13 @@ button { color: inherit; }
 .sort-control { display: flex; align-items: center; gap: 8px; color: var(--muted); font-size: 11px; white-space: nowrap; }
 .sort-control select { border: 0; background: transparent; color: var(--ink); font-size: 11px; cursor: pointer; }
 .product-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 30px 16px; }
-.product-card { min-width: 0; animation: rise-in .45s both; }
+.product-card { min-width: 0; cursor: pointer; animation: rise-in .45s both; transition: transform .2s ease, box-shadow .2s ease; }
+.product-card:hover { transform: translateY(-2px); box-shadow: 0 10px 24px rgb(23 23 23 / 6%); }
 .product-image-wrap { position: relative; aspect-ratio: 1 / 1.18; overflow: hidden; background: #f1f1ef; }
 .product-image { width: 100%; height: 100%; display: block; object-fit: cover; transition: transform .55s cubic-bezier(.2,.7,.2,1); }
 .product-card:hover .product-image { transform: scale(1.035); }
+.product-card:hover .product-name a,
+.product-card:hover .product-detail-link { color: var(--red); }
 .product-tag { position: absolute; top: 12px; left: 12px; padding: 6px 9px; background: var(--white); font-size: 9px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; }
 .quick-add { position: absolute; right: 12px; bottom: 12px; left: 12px; min-height: 42px; border: 0; background: var(--white); font-size: 11px; font-weight: 600; cursor: pointer; transition: background .18s, color .18s; }
 .quick-add:hover { background: var(--ink); color: var(--white); }
@@ -79,6 +82,8 @@ button { color: inherit; }
 .product-name { margin: 0; font-size: 13px; font-weight: 600; }
 .product-price { flex: 0 0 auto; margin: 0; font-size: 12px; }
 .product-description { margin: 5px 0 0; color: var(--muted); font-size: 11px; }
+.product-detail-link { display: inline-flex; gap: 5px; margin-top: 10px; color: var(--ink); font-size: 10px; font-weight: 700; text-decoration: none; }
+.product-detail-link:hover { color: var(--red); }
 .story-band { min-height: 340px; display: grid; align-content: center; justify-items: center; padding: 60px 24px; background: var(--green); text-align: center; }
 .story-band .eyebrow { color: #535a41; }
 .story-line { margin: 16px 0 12px; font-family: var(--display); font-size: clamp(36px, 6vw, 67px); font-weight: 700; line-height: 1.06; }
