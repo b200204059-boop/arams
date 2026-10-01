@@ -1,0 +1,251 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f3f4ef">
+  <meta name="description" content="Shop sunglasses, watches, and everyday style for men and women at ARAMS.">
+  <title>ARAMS — Accessories and everyday style</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <div class="announcement">CASH ON DELIVERY ACROSS ALL 64 DISTRICTS · CALL TO ORDER 01815653564</div>
+  <header class="site-header">
+    <a class="wordmark" href="#top" aria-label="ARAMS home">ARAMS<span>.</span></a>
+    <form class="header-search" id="search-form" role="search">
+      <input id="search-input" type="search" placeholder="Search the ARAMS edit" aria-label="Search products">
+      <button type="submit">Search</button>
+    </form>
+    <button class="bag-button" id="open-bag" type="button" aria-label="Open shopping bag">
+      Cart <span class="bag-count" id="bag-count">0</span>
+    </button>
+  </header>
+  <nav class="main-nav" aria-label="Shop categories">
+    <a href="#shop" data-category="All">Shop all</a>
+    <a href="#shop" data-category="Men">Men</a>
+    <a href="#shop" data-category="Women">Women</a>
+    <a href="#shop" data-category="Trousers">Trousers</a>
+    <a href="#shop" data-category="Pants">Pants</a>
+    <a href="#shop" data-category="Perfumes">Perfumes</a>
+    <a href="#shop" data-category="Polos">Polos</a>
+    <a href="#shop" data-category="Katua">Katua</a>
+    <a href="#shop" data-category="Sunglasses">Sunglasses</a>
+    <a href="#shop" data-category="Watches">Watches</a>
+    <a href="#shop" data-category="Bags">Bags</a>
+    <a href="/watch/casio-a159wa">Featured watch</a>
+    <a href="/buy">Buy landing page</a>
+    <a href="#footer">Contact</a>
+  </nav>
+
+  <main id="top">
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="hero-copy">
+        <p class="eyebrow"><span class="eyebrow-mark"></span> The ARAMS edit</p>
+        <h1 id="hero-title">Everyday pieces<br><span>made to move.</span></h1>
+        <p class="hero-description">Comfortable accessories and ready-to-wear essentials for work, weekends, and everything in between.</p>
+        <div class="hero-actions">
+          <a class="hero-cta" href="#shop">Shop now <span aria-hidden="true">→</span></a>
+          <a class="hero-secondary" href="#departments">Browse categories</a>
+        </div>
+        <span class="hero-index">ARAMS · EVERYDAY COLLECTION · 2026</span>
+      </div>
+      <div class="hero-image" role="img" aria-label="Modern accessories and fashion editorial">
+        <div class="image-caption"><span>THE EVERYDAY EDIT</span><span>ARAMS / 01</span></div>
+        <div class="image-stamp">Find<br>your look.</div>
+      </div>
+    </section>
+
+    <section class="category-section" id="departments" aria-labelledby="department-title">
+      <div class="section-heading">
+        <div><p class="eyebrow">Find your fit</p><h2 id="department-title">Shop by category<span>.</span></h2></div>
+      </div>
+      <div class="category-grid">
+        <a class="category-card" href="#shop" data-category="Sunglasses" style="--category-image:url('https://images.unsplash.com/photo-1511499767150-a48a237f0083?auto=format&fit=crop&w=700&q=80')"><span>Sunglasses</span><span aria-hidden="true">↗</span></a>
+        <a class="category-card" href="#shop" data-category="Watches" style="--category-image:url('https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=700&q=80')"><span>Watches</span><span aria-hidden="true">↗</span></a>
+        <a class="category-card" href="#shop" data-category="Men" style="--category-image:url('https://images.unsplash.com/photo-1516257984-b1b4d707412e?auto=format&fit=crop&w=700&q=80')"><span>Men</span><span aria-hidden="true">↗</span></a>
+        <a class="category-card" href="#shop" data-category="Women" style="--category-image:url('https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=700&q=80')"><span>Women</span><span aria-hidden="true">↗</span></a>
+      </div>
+    </section>
+
+    <section class="service-strip" aria-label="Shopping information">
+      <div><strong>01</strong><span>Cash on delivery nationwide</span></div>
+      <div><strong>02</strong><span>Men, women, and unisex fits</span></div>
+      <div><strong>03</strong><span>Easy WhatsApp ordering</span></div>
+    </section>
+
+    <section class="catalog-section" id="watches" aria-labelledby="watch-title">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">Bangladesh market edit</p>
+          <h2 id="watch-title">More watches, more ways to wear them<span>.</span></h2>
+        </div>
+        <a class="text-link" href="#shop" data-category="Watches">View all watches <span aria-hidden="true">↗</span></a>
+      </div>
+      <div class="product-grid catalog-grid" id="watch-grid"></div>
+    </section>
+
+    <section class="catalog-section" id="sunglasses" aria-labelledby="sunglasses-title">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">Clear days ahead</p>
+          <h2 id="sunglasses-title">Sunglasses for every angle<span>.</span></h2>
+        </div>
+        <a class="text-link" href="#shop" data-category="Sunglasses">View sunglasses <span aria-hidden="true">↗</span></a>
+      </div>
+      <div class="product-grid catalog-grid" id="sunglasses-grid"></div>
+    </section>
+
+    <section class="catalog-section" id="trousers" aria-labelledby="trousers-title">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">Easy everyday fits</p>
+          <h2 id="trousers-title">Trousers made to move<span>.</span></h2>
+        </div>
+        <a class="text-link" href="#shop" data-category="Trousers">View trousers <span aria-hidden="true">↗</span></a>
+      </div>
+      <div class="product-grid catalog-grid" id="trousers-grid"></div>
+    </section>
+
+    <section class="catalog-section" id="pants" aria-labelledby="pants-title">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">Men's market edit</p>
+          <h2 id="pants-title">Men's pants for every fit<span>.</span></h2>
+        </div>
+        <a class="text-link" href="#shop" data-category="Pants">View all pants <span aria-hidden="true">↗</span></a>
+      </div>
+      <div class="product-grid catalog-grid" id="pants-grid"></div>
+    </section>
+
+    <section class="catalog-section" id="perfumes" aria-labelledby="perfumes-title">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">Best selling fragrances</p>
+          <h2 id="perfumes-title">Scents worth wearing<span>.</span></h2>
+        </div>
+        <a class="text-link" href="#shop" data-category="Perfumes">View all perfumes <span aria-hidden="true">↗</span></a>
+      </div>
+      <div class="product-grid catalog-grid" id="perfumes-grid"></div>
+    </section>
+
+    <section class="catalog-section" id="polos" aria-labelledby="polos-title">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">Bangladesh market edit</p>
+          <h2 id="polos-title">Men's polos<span>.</span></h2>
+        </div>
+        <a class="text-link" href="#shop" data-category="Polos">View all polos <span aria-hidden="true">↗</span></a>
+      </div>
+      <div class="product-grid catalog-grid" id="polos-grid"></div>
+    </section>
+
+    <section class="catalog-section" id="katua" aria-labelledby="katua-title">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">Henley collection</p>
+          <h2 id="katua-title">Katua for every day<span>.</span></h2>
+        </div>
+        <a class="text-link" href="#shop" data-category="Katua">View all Katua <span aria-hidden="true">↗</span></a>
+      </div>
+      <div class="product-grid catalog-grid" id="katua-grid"></div>
+    </section>
+
+    <section class="catalog-section" id="bags" aria-labelledby="bags-title">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">Premium Bangladesh market edit</p>
+          <h2 id="bags-title">Bags for every plan<span>.</span></h2>
+        </div>
+        <a class="text-link" href="#shop" data-category="Bags">View all bags <span aria-hidden="true">↗</span></a>
+      </div>
+      <div class="product-grid catalog-grid" id="bags-grid"></div>
+    </section>
+
+    <section class="shop-section" id="shop" aria-labelledby="shop-title">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">New arrivals and best sellers</p>
+          <h2 id="shop-title">Shop the collection<span>.</span></h2>
+        </div>
+        <p class="item-total" id="item-total">08 products</p>
+      </div>
+      <div class="shop-controls">
+        <div class="category-tabs" role="group" aria-label="Filter products">
+          <button class="category-tab is-active" type="button" data-category="All">All products</button>
+          <button class="category-tab" type="button" data-category="Sunglasses">Sunglasses</button>
+          <button class="category-tab" type="button" data-category="Watches">Watches</button>
+          <button class="category-tab" type="button" data-category="Trousers">Trousers</button>
+          <button class="category-tab" type="button" data-category="Pants">Pants</button>
+          <button class="category-tab" type="button" data-category="Perfumes">Perfumes</button>
+          <button class="category-tab" type="button" data-category="Polos">Polos</button>
+          <button class="category-tab" type="button" data-category="Katua">Katua</button>
+          <button class="category-tab" type="button" data-category="Bags">Bags</button>
+          <button class="category-tab" type="button" data-category="Men">Men</button>
+          <button class="category-tab" type="button" data-category="Women">Women</button>
+        </div>
+        <label class="sort-control">Sort
+          <select id="sort-products" aria-label="Sort products">
+            <option value="featured">Featured</option>
+            <option value="low-high">Price: low to high</option>
+            <option value="high-low">Price: high to low</option>
+          </select>
+        </label>
+      </div>
+      <div class="product-grid" id="product-grid" aria-live="polite"></div>
+    </section>
+
+    <section class="story-band" id="story">
+      <p class="eyebrow">The finishing touches</p>
+      <p class="story-line">Make it <em>yours.</em></p>
+      <p class="story-note">Explore versatile accessories and personal style for every day.</p>
+    </section>
+  </main>
+
+  <footer class="site-footer" id="footer">
+    <a class="wordmark" href="#top">ARAMS<span>.</span></a>
+    <p>Everyday style, all in one place.</p>
+    <a href="tel:+8801815653564">Call 01815653564</a>
+    <a href="https://wa.me/8801815653564" target="_blank" rel="noreferrer">WhatsApp ARAMS</a>
+    <a href="https://www.google.com/maps/search/?api=1&amp;query=151%2FC%20Distilary%20Road%2C%20Gendaria" target="_blank" rel="noreferrer">151/C Distilary Road, Gendaria</a>
+    <a href="#departments">Shop categories ↑</a>
+  </footer>
+
+  <div class="drawer-backdrop" id="drawer-backdrop" hidden></div>
+  <aside class="bag-drawer" id="bag-drawer" aria-labelledby="bag-title" aria-modal="true" role="dialog" aria-hidden="true">
+    <div class="drawer-heading">
+      <div><p class="eyebrow">Your picks</p><h2 id="bag-title">Shopping bag</h2></div>
+      <button class="close-button" id="close-bag" type="button" aria-label="Close shopping bag">×</button>
+    </div>
+    <div class="bag-items" id="bag-items"></div>
+    <div class="bag-empty" id="bag-empty"><p>Your bag is taking a breather.</p><button class="text-link" id="continue-shopping" type="button">Keep browsing <span aria-hidden="true">↗</span></button></div>
+    <div class="bag-bottom" id="bag-bottom" hidden>
+      <div class="subtotal"><span>Subtotal</span><strong id="bag-subtotal">৳0</strong></div>
+      <p class="shipping-note">Delivery details are confirmed with your order.</p>
+      <button class="checkout-button" id="checkout-button" type="button">Continue to order <span aria-hidden="true">→</span></button>
+    </div>
+  </aside>
+
+  <dialog class="checkout-dialog" id="checkout-dialog" aria-labelledby="checkout-title">
+    <form id="checkout-form">
+      <div class="drawer-heading">
+        <div><p class="eyebrow">Almost yours</p><h2 id="checkout-title">Your details</h2></div>
+        <button class="close-button" id="close-checkout" type="button" aria-label="Close order form">×</button>
+      </div>
+      <p class="form-intro">Add your details, then send the prepared order to ARAMS in WhatsApp.</p>
+      <div class="checkout-items" id="checkout-items" aria-live="polite"></div>
+      <label class="form-field">Full name<input name="name" autocomplete="name" required></label>
+      <label class="form-field">Phone number<input name="phone" type="tel" autocomplete="tel" required></label>
+      <label class="form-field">Email address <span>(optional)</span><input name="email" type="email" autocomplete="email"></label>
+      <label class="form-field">Delivery or pickup details<textarea name="notes" rows="3" placeholder="Address, pickup preference, or anything else" required></textarea></label>
+      <div class="order-total"><span>Order total</span><strong id="checkout-total">৳0</strong></div>
+      <button class="checkout-button" type="submit">Continue to WhatsApp <span aria-hidden="true">→</span></button>
+      <p class="form-footnote">ARAMS saves your order, then WhatsApp opens with its details. Tap Send in WhatsApp to contact the shop.</p>
+    </form>
+  </dialog>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+</body>
+</html>

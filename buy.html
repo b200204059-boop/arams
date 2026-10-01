@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f3f4ef">
+  <meta name="description" content="Buy accessories and essentials from ARAMS in one quick checkout flow.">
+  <title>Buy from ARAMS</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <script src="buy.js" defer></script>
+</head>
+<body class="buy-page-body">
+  <div class="announcement">ARAMS BUY FLOW · Quick checkout for your essentials</div>
+  <header class="site-header buy-header">
+    <a class="wordmark" href="/" aria-label="ARAMS home">ARAMS<span>.</span></a>
+    <nav class="main-nav buy-nav" aria-label="Buy page navigation">
+      <a href="/">Shop</a>
+      <a href="#best-sellers">Best sellers</a>
+      <a href="#checkout">Checkout</a>
+    </nav>
+    <button class="bag-button" id="open-bag" type="button" aria-label="Open shopping bag">
+      Cart <span class="bag-count" id="bag-count">0</span>
+    </button>
+  </header>
+
+  <main class="buy-shell">
+    <section class="buy-hero">
+      <div class="buy-copy">
+        <p class="eyebrow"><span class="eyebrow-mark"></span> Fast, direct buying</p>
+        <h1>Buy your everyday essentials in one place.</h1>
+        <p>Pick your favorite pieces, review the total, and send the order straight to ARAMS on WhatsApp.</p>
+        <div class="hero-actions">
+          <a class="hero-cta" href="#best-sellers">Shop now <span aria-hidden="true">→</span></a>
+          <a class="hero-secondary" href="/">Back to store</a>
+        </div>
+      </div>
+      <div class="buy-hero-card">
+        <span class="mini-label">This week</span>
+        <h2>Free check-out-ready summaries</h2>
+        <ul>
+          <li>Instant order summary</li>
+          <li>WhatsApp confirmation</li>
+          <li>Delivery notes included</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="buy-content" id="best-sellers">
+      <div class="buy-products">
+        <div class="section-heading buy-heading">
+          <div>
+            <p class="eyebrow">Pick your pieces</p>
+            <h2>Best sellers<span>.</span></h2>
+          </div>
+        </div>
+        <div class="product-grid buy-product-grid" id="buy-product-grid"></div>
+      </div>
+
+      <aside class="order-summary" id="checkout">
+        <div class="summary-header">
+          <p class="eyebrow">Your order</p>
+          <h2>Summary</h2>
+        </div>
+        <div class="summary-list" id="summary-list"></div>
+        <div class="summary-totals">
+          <div><span>Subtotal</span><strong id="summary-total">৳0</strong></div>
+        </div>
+
+        <form id="buy-form" class="buy-form">
+          <label class="form-field">
+            Full name
+            <input name="name" type="text" placeholder="Your full name" required>
+          </label>
+          <label class="form-field">
+            Phone number
+            <input name="phone" type="tel" placeholder="01XXXXXXXXX" required>
+          </label>
+          <label class="form-field">
+            Email address <span>(optional)</span>
+            <input name="email" type="email" placeholder="you@example.com">
+          </label>
+          <label class="form-field">
+            Delivery or pickup details
+            <textarea name="notes" rows="3" placeholder="Address, pickup notes, or preferred time" required></textarea>
+          </label>
+          <button class="checkout-button" type="submit">Send order to WhatsApp <span aria-hidden="true">→</span></button>
+        </form>
+      </aside>
+    </section>
+  </main>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+</body>
+</html>

@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Casio A159WA digital watch from ARAMS. Vintage styling, steel band, and delivery across Bangladesh.">
+  <title>Casio A-159WA Digital Watch | ARAMS</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body class="product-page-body">
+  <div class="announcement">ARAMS WATCH EDIT · DELIVERY ACROSS BANGLADESH</div>
+  <header class="site-header product-page-header">
+    <a class="wordmark" href="/" aria-label="ARAMS home">ARAMS<span>.</span></a>
+    <nav class="product-page-nav" aria-label="Product navigation">
+      <a href="/">Shop</a>
+      <a href="/#watches">Watches</a>
+      <a href="/buy">Buy page</a>
+    </nav>
+    <a class="product-cart-link" href="/buy">Cart <span>0</span></a>
+  </header>
+
+  <main class="product-page-shell">
+    <div class="product-breadcrumb"><a href="/">Home</a><span>/</span><a href="/#watches">Watches</a><span>/</span><strong>Casio A-159WA</strong></div>
+    <section class="product-detail-layout">
+      <div class="product-gallery">
+        <div class="product-main-image">
+          <img src="https://nagram.com.bd/cdn/shop/files/a14c72d7-60e2-478e-bdb5-4f2ccf62b651.jpg?v=1785762354&width=1200" alt="Casio A159WA digital watch with silver band">
+          <span class="product-gallery-badge">Featured watch</span>
+        </div>
+        <div class="product-thumbnail-row">
+          <div class="product-thumb is-selected"><img src="https://nagram.com.bd/cdn/shop/files/a14c72d7-60e2-478e-bdb5-4f2ccf62b651.jpg?v=1785762354&width=300" alt="Watch detail front"></div>
+          <div class="product-thumb"><img src="https://nagram.com.bd/cdn/shop/files/230129ca-2dec-4c67-8b7a-9ae625bd46e5.jpg?v=1785762382&width=300" alt="Watch detail close-up"></div>
+          <div class="product-thumb"><img src="https://nagram.com.bd/cdn/shop/files/6208382541153549763.jpg?v=1785762409&width=300" alt="Watch detail on wrist"></div>
+        </div>
+      </div>
+
+      <div class="product-detail-copy">
+        <p class="eyebrow">Vintage digital edit</p>
+        <h1>Casio A-159WA Digital Watch</h1>
+        <p class="product-rating">★★★★★ <span>Classic everyday pick</span></p>
+        <div class="product-price-block"><strong>৳990</strong><del>৳1,500</del><span>Save ৳510 · 34% off</span></div>
+        <p class="product-lead">A vintage digital classic with a silver-tone steel chain, adjustable fit, and practical everyday functions. Suitable for men and women.</p>
+        <div class="product-offer"><strong>LIMITED-TIME WATCH OFFER</strong><span>Cash on delivery across Bangladesh. Delivery is free on this offer; regular delivery is ৳70 in Dhaka and ৳130 outside Dhaka.</span></div>
+        <form class="product-order-form" id="product-order-form">
+          <label>Quantity<select name="quantity"><option value="1">1</option><option value="2">2</option></select></label>
+          <button class="product-buy-button" type="submit">Order on WhatsApp <span aria-hidden="true">→</span></button>
+        </form>
+        <div class="product-benefits">
+          <div><strong>01</strong><span>44g lightweight case · 33.2mm diameter</span></div>
+          <div><strong>02</strong><span>Quartz movement · alarm, stopwatch and date display</span></div>
+          <div><strong>03</strong><span>Water-resistant build · adjustable 9-inch steel chain</span></div>
+        </div>
+        <details open><summary>Product details</summary><p>Silver-tone stainless-steel chain, quartz digital movement, 44g weight, 33.2mm diameter, 9-inch adjustable length, alarm, stopwatch, date display, and water resistance. An extra battery and premium box are included with the watch.</p></details>
+        <details><summary>Warranty and delivery</summary><p>Includes a 1-year warranty card. Regular delivery is generally 1-3 working days in Dhaka and 2-5 working days outside Dhaka. Check the parcel at delivery and contact ARAMS if there is a product issue.</p></details>
+      </div>
+    </section>
+  </main>
+
+  <div class="product-toast" id="product-toast" role="status" aria-live="polite"></div>
+  <script>
+    const form = document.querySelector("#product-order-form");
+    const toast = document.querySelector("#product-toast");
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      const button = form.querySelector("button");
+      const quantity = Number(new FormData(form).get("quantity"));
+      const originalText = button.textContent;
+      button.disabled = true;
+      button.textContent = "Preparing order...";
+      try {
+        const response = await fetch("/api/orders", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            customer: { name: "Casio A159WA landing page customer", phone: "Pending confirmation", email: "", notes: "Please confirm delivery details on WhatsApp." },
+            items: [{ id: "casio-a159wa", quantity }]
+          })
+        });
+        const result = await response.json();
+        if (!response.ok) throw new Error(result.error || "Could not prepare the order.");
+        window.location.href = result.whatsapp_url;
+      } catch (error) {
+        toast.textContent = error.message;
+        toast.classList.add("is-visible");
+        setTimeout(() => toast.classList.remove("is-visible"), 3000);
+      } finally {
+        button.disabled = false;
+        button.textContent = originalText;
+      }
+    });
+  </script>
+</body>
+</html>
