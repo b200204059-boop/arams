@@ -3,12 +3,304 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Casio A159WA digital watch from ARAMS. Vintage styling, steel band, and delivery across Bangladesh.">
+  <meta name="description" content="Casio A-159WA digital watch from ARAMS. Vintage styling, stainless steel band, water-resistant build, and cash-on-delivery support across Bangladesh.">
   <title>Casio A-159WA Digital Watch | ARAMS</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/styles.css">
+  <style>
+    body {
+      background: #f7f5f1;
+    }
+    .casio-page {
+      max-width: 1220px;
+      margin: 0 auto;
+      padding: 20px 18px 70px;
+    }
+    .casio-topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 20px;
+      color: #4d4d4d;
+      font-size: 12px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+    .casio-hero {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 32px;
+      background: #fff;
+      border: 1px solid #e7e2d8;
+      border-radius: 24px;
+      padding: 24px;
+      box-shadow: 0 18px 40px rgba(18, 20, 16, 0.04);
+    }
+    .casio-gallery {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .casio-main-image {
+      position: relative;
+      overflow: hidden;
+      background: linear-gradient(135deg, #f8f4ee, #efefe9);
+      border-radius: 18px;
+      padding: 18px;
+      border: 1px solid #efe7df;
+    }
+    .casio-main-image img {
+      display: block;
+      width: 100%;
+      max-height: 560px;
+      border-radius: 14px;
+      object-fit: cover;
+    }
+    .casio-badge {
+      position: absolute;
+      top: 18px;
+      left: 18px;
+      background: #1b1b1b;
+      color: #fff;
+      padding: 8px 12px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+    .casio-thumbs {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+    }
+    .casio-thumb {
+      background: #f5f2ee;
+      border: 1px solid #e8dfd4;
+      border-radius: 12px;
+      overflow: hidden;
+      padding: 4px;
+      cursor: pointer;
+      transition: border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .casio-thumb.is-selected {
+      border-color: #171717;
+      box-shadow: 0 0 0 2px rgba(23, 23, 23, 0.1);
+      transform: translateY(-1px);
+    }
+    .casio-thumb img {
+      display: block;
+      width: 100%;
+      height: 90px;
+      object-fit: cover;
+      border-radius: 10px;
+      pointer-events: none;
+    }
+    .casio-copy {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    .eyebrow {
+      margin: 0 0 8px;
+      font-size: 12px;
+      line-height: 1.3;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #7d6658;
+      font-weight: 700;
+    }
+    h1 {
+      margin: 0;
+      font-size: clamp(2rem, 4vw, 3rem);
+      line-height: 1.04;
+      letter-spacing: -0.04em;
+      color: #161616;
+    }
+    .casio-rating {
+      margin: 14px 0 8px;
+      font-size: 14px;
+      color: #5c534d;
+    }
+    .casio-price {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin: 16px 0;
+    }
+    .casio-price strong {
+      font-size: clamp(2rem, 3vw, 2.5rem);
+      color: #111;
+      font-weight: 800;
+    }
+    .casio-price del {
+      color: #999;
+      font-size: 1rem;
+    }
+    .casio-price span {
+      color: #1f6f42;
+      font-size: 0.9rem;
+      font-weight: 700;
+    }
+    .casio-lead {
+      margin: 0 0 22px;
+      font-size: 1.05rem;
+      line-height: 1.7;
+      color: #3d3d3d;
+    }
+    .casio-offer {
+      background: #fff7db;
+      border: 1px solid #efd79a;
+      border-radius: 14px;
+      padding: 12px 14px;
+      margin-bottom: 18px;
+      color: #3c2f1d;
+      font-size: 0.95rem;
+      line-height: 1.6;
+    }
+    .casio-offer strong {
+      display: block;
+      margin-bottom: 4px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      font-size: 11px;
+    }
+    .product-order-form {
+      display: flex;
+      align-items: end;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 6px;
+      margin-bottom: 18px;
+    }
+    .product-order-form label {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      color: #373737;
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+    .product-order-form select {
+      width: 92px;
+      padding: 12px 14px;
+      border-radius: 10px;
+      border: 1px solid #dcd3c7;
+      background: #fff;
+      font-size: 1rem;
+    }
+    .product-buy-button {
+      border: none;
+      border-radius: 999px;
+      background: #171717;
+      color: white;
+      font-size: 1rem;
+      font-weight: 700;
+      padding: 14px 22px;
+      cursor: pointer;
+      transition: transform 0.2s ease, opacity 0.2s ease;
+    }
+    .product-buy-button:hover { transform: translateY(-1px); }
+    .casio-benefits {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 10px;
+    }
+    .casio-benefits div {
+      background: #f7f3ee;
+      border: 1px solid #e8dfd3;
+      border-radius: 12px;
+      padding: 14px 12px;
+    }
+    .casio-benefits strong {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 12px;
+      letter-spacing: 0.1em;
+      color: #5f4a3a;
+      text-transform: uppercase;
+    }
+    .casio-benefits span {
+      color: #363636;
+      line-height: 1.5;
+      font-size: 0.94rem;
+    }
+    .casio-promo-grid {
+      margin-top: 26px;
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 24px;
+    }
+    .casio-panel {
+      background: #fff;
+      border: 1px solid #e7e1d8;
+      border-radius: 20px;
+      padding: 24px;
+    }
+    .casio-panel h2 {
+      margin: 0 0 16px;
+      font-size: 1.5rem;
+      letter-spacing: -0.04em;
+    }
+    .casio-panel ul {
+      padding-left: 20px;
+      margin: 0;
+      line-height: 1.9;
+      color: #2d2d2d;
+    }
+    .spec-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px 16px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+    .spec-grid li {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #efe7dd;
+      color: #3e3e3e;
+    }
+    .spec-grid span:first-child {
+      color: #73655d;
+      font-weight: 600;
+    }
+    .product-toast {
+      position: fixed;
+      right: 18px;
+      bottom: 18px;
+      background: #191919;
+      color: white;
+      padding: 12px 16px;
+      border-radius: 12px;
+      opacity: 0;
+      transform: translateY(10px);
+      pointer-events: none;
+      transition: 0.25s ease;
+      font-size: 0.9rem;
+    }
+    .product-toast.is-visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    @media (max-width: 900px) {
+      .casio-hero,
+      .casio-promo-grid {
+        grid-template-columns: 1fr;
+      }
+      .casio-benefits {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
 </head>
 <body class="product-page-body">
   <div class="announcement">ARAMS WATCH EDIT · DELIVERY ACROSS BANGLADESH</div>
@@ -22,75 +314,164 @@
     <a class="product-cart-link" href="/buy">Cart <span>0</span></a>
   </header>
 
-  <main class="product-page-shell">
-    <div class="product-breadcrumb"><a href="/">Home</a><span>/</span><a href="/#watches">Watches</a><span>/</span><strong>Casio A-159WA</strong></div>
-    <section class="product-detail-layout">
-      <div class="product-gallery">
-        <div class="product-main-image">
-          <img src="https://nagram.com.bd/cdn/shop/files/a14c72d7-60e2-478e-bdb5-4f2ccf62b651.jpg?v=1785762354&width=1200" alt="Casio A159WA digital watch with silver band">
-          <span class="product-gallery-badge">Featured watch</span>
+  <main class="casio-page">
+    <div class="casio-topbar">
+      <span>Home / Watches / Casio A-159WA</span>
+      <span>4.9/5 trusted rating</span>
+    </div>
+
+    <section class="casio-hero">
+      <div class="casio-gallery">
+        <div class="casio-main-image">
+          <span class="casio-badge">Featured watch</span>
+          <img id="casio-main-image" src="https://nagram.com.bd/cdn/shop/files/a14c72d7-60e2-478e-bdb5-4f2ccf62b651.jpg?v=1785762354&width=1200" alt="Casio A-159WA digital watch">
         </div>
-        <div class="product-thumbnail-row">
-          <div class="product-thumb is-selected"><img src="https://nagram.com.bd/cdn/shop/files/a14c72d7-60e2-478e-bdb5-4f2ccf62b651.jpg?v=1785762354&width=300" alt="Watch detail front"></div>
-          <div class="product-thumb"><img src="https://nagram.com.bd/cdn/shop/files/230129ca-2dec-4c67-8b7a-9ae625bd46e5.jpg?v=1785762382&width=300" alt="Watch detail close-up"></div>
-          <div class="product-thumb"><img src="https://nagram.com.bd/cdn/shop/files/6208382541153549763.jpg?v=1785762409&width=300" alt="Watch detail on wrist"></div>
+        <div class="casio-thumbs">
+          <button type="button" class="casio-thumb is-selected" data-image="https://nagram.com.bd/cdn/shop/files/a14c72d7-60e2-478e-bdb5-4f2ccf62b651.jpg?v=1785762354&width=1200" data-alt="Casio watch front view" aria-label="Show front view"><img src="https://nagram.com.bd/cdn/shop/files/a14c72d7-60e2-478e-bdb5-4f2ccf62b651.jpg?v=1785762354&width=300" alt="Casio watch front view"></button>
+          <button type="button" class="casio-thumb" data-image="https://nagram.com.bd/cdn/shop/files/230129ca-2dec-4c67-8b7a-9ae625bd46e5.jpg?v=1785762382&width=1200" data-alt="Casio watch side profile" aria-label="Show side profile"><img src="https://nagram.com.bd/cdn/shop/files/230129ca-2dec-4c67-8b7a-9ae625bd46e5.jpg?v=1785762382&width=300" alt="Casio watch side profile"></button>
+          <button type="button" class="casio-thumb" data-image="https://nagram.com.bd/cdn/shop/files/6208382541153549763.jpg?v=1785762409&width=1200" data-alt="Casio watch on wrist" aria-label="Show watch on wrist"><img src="https://nagram.com.bd/cdn/shop/files/6208382541153549763.jpg?v=1785762409&width=300" alt="Casio watch on wrist"></button>
+          <button type="button" class="casio-thumb" data-image="https://nagram.com.bd/cdn/shop/files/5920391a-f763-494e-bbe9-f0fca60ea2d7.jpg?v=1785762434&width=1200" data-alt="Casio watch detail view" aria-label="Show detail view"><img src="https://nagram.com.bd/cdn/shop/files/5920391a-f763-494e-bbe9-f0fca60ea2d7.jpg?v=1785762434&width=300" alt="Casio watch detail view"></button>
         </div>
       </div>
 
-      <div class="product-detail-copy">
+      <div class="casio-copy">
         <p class="eyebrow">Vintage digital edit</p>
         <h1>Casio A-159WA Digital Watch</h1>
-        <p class="product-rating">★★★★★ <span>Classic everyday pick</span></p>
-        <div class="product-price-block"><strong>৳990</strong><del>৳1,500</del><span>Save ৳510 · 34% off</span></div>
-        <p class="product-lead">A vintage digital classic with a silver-tone steel chain, adjustable fit, and practical everyday functions. Suitable for men and women.</p>
-        <div class="product-offer"><strong>LIMITED-TIME WATCH OFFER</strong><span>Cash on delivery across Bangladesh. Delivery is free on this offer; regular delivery is ৳70 in Dhaka and ৳130 outside Dhaka.</span></div>
-        <form class="product-order-form" id="product-order-form">
-          <label>Quantity<select name="quantity"><option value="1">1</option><option value="2">2</option></select></label>
-          <button class="product-buy-button" type="submit">Order on WhatsApp <span aria-hidden="true">→</span></button>
-        </form>
-        <div class="product-benefits">
-          <div><strong>01</strong><span>44g lightweight case · 33.2mm diameter</span></div>
-          <div><strong>02</strong><span>Quartz movement · alarm, stopwatch and date display</span></div>
-          <div><strong>03</strong><span>Water-resistant build · adjustable 9-inch steel chain</span></div>
+        <div class="casio-rating">★★★★★ <span>Classic everyday pick</span></div>
+        <div class="casio-price">
+          <strong>৳990</strong>
+          <del>৳1,500</del>
+          <span>Save ৳510 · 34% off</span>
         </div>
-        <details open><summary>Product details</summary><p>Silver-tone stainless-steel chain, quartz digital movement, 44g weight, 33.2mm diameter, 9-inch adjustable length, alarm, stopwatch, date display, and water resistance. An extra battery and premium box are included with the watch.</p></details>
-        <details><summary>Warranty and delivery</summary><p>Includes a 1-year warranty card. Regular delivery is generally 1-3 working days in Dhaka and 2-5 working days outside Dhaka. Check the parcel at delivery and contact ARAMS if there is a product issue.</p></details>
+        <p class="casio-lead">A classic digital wristwatch with a silver-tone stainless-steel band, easygoing vintage styling, and practical everyday features. Built to look sharp with casual outfits and keep you on time through the day.</p>
+        <div class="casio-offer">
+          <strong>ARAMS offer</strong>
+          Cash on delivery is available across Bangladesh. Delivery charges vary by location; our team will confirm the final delivery details before dispatch.
+        </div>
+
+        <form class="product-order-form" id="product-order-form">
+          <label>
+            Quantity
+            <select name="quantity">
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+            </select>
+          </label>
+          <button class="product-buy-button" type="submit">Order on WhatsApp →</button>
+        </form>
+
+        <div class="casio-benefits">
+          <div><strong>01</strong><span>Water resistant and designed for daily use</span></div>
+          <div><strong>02</strong><span>Alarm, stopwatch, and date display included</span></div>
+          <div><strong>03</strong><span>Adjustable stainless-steel chain with premium box</span></div>
+        </div>
       </div>
+    </section>
+
+    <section class="casio-promo-grid">
+      <div class="casio-panel">
+        <h2>Why shoppers choose it</h2>
+        <ul>
+          <li>Vintage digital styling that works with casual and everyday outfits</li>
+          <li>Lightweight build with a compact 33.2mm case</li>
+          <li>Quartz movement for reliable everyday timing</li>
+          <li>Adjustable stainless-steel band for a comfortable fit</li>
+          <li>Includes a premium box and useful daily functions</li>
+        </ul>
+      </div>
+
+      <div class="casio-panel">
+        <h2>Product details</h2>
+        <ul class="spec-grid">
+          <li><span>Model</span><strong>Casio A-159WA</strong></li>
+          <li><span>Movement</span><strong>Quartz</strong></li>
+          <li><span>Case size</span><strong>33.2 mm</strong></li>
+          <li><span>Band</span><strong>Steel chain</strong></li>
+          <li><span>Weight</span><strong>44 g</strong></li>
+          <li><span>Water resistance</span><strong>Yes</strong></li>
+          <li><span>Functions</span><strong>Alarm, date, stopwatch</strong></li>
+          <li><span>Warranty</span><strong>1 year</strong></li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="casio-panel" style="margin-top:26px;">
+      <h2>About this Casio A-159WA</h2>
+      <p style="margin: 0; line-height: 1.8; color: #2d2d2d;">
+        The Casio A-159WA brings together the recognizable digital aesthetic of classic Casio watches with modern use-case practicality. Its clean display, sturdy body, and steel band make it ideal for students, professionals, and everyday users who want a dependable watch that still looks premium.
+      </p>
+    </section>
+
+    <section class="casio-panel" style="margin-top:26px;">
+      <h2>Delivery and after-sales support</h2>
+      <ul>
+        <li>Cash on delivery available across Bangladesh</li>
+        <li>Fast delivery in Dhaka and other major areas with regular shipping support</li>
+        <li>Product checked at delivery time and return support in line with our policy</li>
+        <li>Customer support available to help with delivery or product questions</li>
+      </ul>
     </section>
   </main>
 
   <div class="product-toast" id="product-toast" role="status" aria-live="polite"></div>
+
   <script>
-    const form = document.querySelector("#product-order-form");
-    const toast = document.querySelector("#product-toast");
-    form.addEventListener("submit", async (event) => {
-      event.preventDefault();
-      const button = form.querySelector("button");
-      const quantity = Number(new FormData(form).get("quantity"));
-      const originalText = button.textContent;
-      button.disabled = true;
-      button.textContent = "Preparing order...";
-      try {
-        const response = await fetch("/api/orders", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            customer: { name: "Casio A159WA landing page customer", phone: "Pending confirmation", email: "", notes: "Please confirm delivery details on WhatsApp." },
-            items: [{ id: "casio-a159wa", quantity }]
-          })
-        });
-        const result = await response.json();
-        if (!response.ok) throw new Error(result.error || "Could not prepare the order.");
-        window.location.href = result.whatsapp_url;
-      } catch (error) {
-        toast.textContent = error.message;
-        toast.classList.add("is-visible");
-        setTimeout(() => toast.classList.remove("is-visible"), 3000);
-      } finally {
-        button.disabled = false;
-        button.textContent = originalText;
-      }
+    const mainImage = document.getElementById('casio-main-image');
+    const galleryButtons = document.querySelectorAll('.casio-thumb');
+
+    galleryButtons.forEach((button) => {
+      button.addEventListener('click', () => {
+        const { image, alt } = button.dataset;
+        mainImage.src = image;
+        mainImage.alt = alt;
+
+        galleryButtons.forEach((item) => item.classList.toggle('is-selected', item === button));
+      });
     });
+
+    const form = document.querySelector('#product-order-form');
+    const toast = document.querySelector('#product-toast');
+    if (form) {
+      form.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        const button = form.querySelector('button');
+        const quantity = Number(new FormData(form).get('quantity'));
+        const originalText = button.textContent;
+        button.disabled = true;
+        button.textContent = 'Preparing order...';
+
+        try {
+          const response = await fetch('/api/orders', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              customer: {
+                name: 'Casio A159WA landing page customer',
+                phone: 'Pending confirmation',
+                email: '',
+                notes: 'Please confirm delivery details on WhatsApp.'
+              },
+              items: [{ id: 'casio-a159wa', quantity }]
+            })
+          });
+
+          const result = await response.json();
+          if (!response.ok) {
+            throw new Error(result.error || 'Could not prepare the order.');
+          }
+
+          window.location.href = result.whatsapp_url;
+        } catch (error) {
+          toast.textContent = error.message;
+          toast.classList.add('is-visible');
+          setTimeout(() => toast.classList.remove('is-visible'), 3000);
+        } finally {
+          button.disabled = false;
+          button.textContent = originalText;
+        }
+      });
+    }
   </script>
 </body>
 </html>

@@ -13,10 +13,8 @@ const products = [
   { id: "luna-watch", name: "Luna Watch", price: 3200, color: "Silver", image: "https://images.unsplash.com/photo-1524592094714-0f0654e20314?auto=format&fit=crop&w=900&q=80", description: "Slim profile with a bright face" },
   { id: "mens-trousers", name: "Daily Trousers", price: 2650, color: "Stone", image: "https://images.unsplash.com/photo-1473966968600-fa801b869a1a?auto=format&fit=crop&w=900&q=80", description: "Tapered fit for everyday wear" },
   { id: "relaxed-cargo-trousers", name: "Relaxed Cargo Trousers", price: 3150, color: "Olive", image: "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=900&q=80", description: "Roomy pockets, easy cotton fit" },
-  { id: "weekend-chinos", name: "Weekend Chinos", price: 2850, color: "Navy", image: "https://images.unsplash.com/photo-1506629905607-d9d3b9a4f9d4?auto=format&fit=crop&w=900&q=80", description: "Soft twill with a clean taper" },
   { id: "linen-wide-leg-trousers", name: "Linen Wide-Leg Trousers", price: 2950, color: "Ivory", image: "https://images.unsplash.com/photo-1594633312681-425c7b97ccd1?auto=format&fit=crop&w=900&q=80", description: "Breathable linen with an easy drape" },
   { id: "city-pleat-trousers", name: "City Pleat Trousers", price: 3250, color: "Charcoal", image: "https://images.unsplash.com/photo-1551488831-00ddcb6c6bd3?auto=format&fit=crop&w=900&q=80", description: "A neat pleat with a relaxed leg" },
-  { id: "everyday-taper-trousers", name: "Everyday Taper Trousers", price: 2750, color: "Black", image: "https://images.unsplash.com/photo-1506629905607-d9d3b9a4f9d4?auto=format&fit=crop&w=900&q=80", description: "Soft stretch fabric for busy days" },
   { id: "utility-denim-trousers", name: "Utility Denim Trousers", price: 3050, color: "Indigo", image: "https://images.unsplash.com/photo-1542272604-787c3835535d?auto=format&fit=crop&w=900&q=80", description: "Sturdy denim with a straight fit" },
   { id: "linen-straight-trousers", name: "Linen Straight Trousers", price: 2850, color: "Sand", image: "https://images.unsplash.com/photo-1594633312681-425c7b97ccd1?auto=format&fit=crop&w=900&q=80", description: "Lightweight straight cut for warm days" },
   { id: "workday-twill-trousers", name: "Workday Twill Trousers", price: 2950, color: "Charcoal", image: "https://images.unsplash.com/photo-1473966968600-fa801b869a1a?auto=format&fit=crop&w=900&q=80", description: "Clean twill with a comfortable taper" },
@@ -80,17 +78,20 @@ const gorurPants = [
 }));
 products.push(...gorurPants);
 const bestSellingPerfumes = [
-  ["Armaf Club De Nuit Intense EDP Man", 7200, "Full bottle", "https://buyperfumeinbangladesh.com/wp-content/uploads/2020/11/Armaf-Club-de-Nuit-Intense-EDP-for-Men-200ml.jpg"],
-  ["Armaf Club de Nuit Intense EDT for Men", 4300, "Full bottle", "https://buyperfumeinbangladesh.com/wp-content/uploads/2017/07/Armaf-Club-de-Nuit-Intense-EDT-for-Men-105m.jpg"],
-  ["Versace Eros Pour Homme EDT", 10700, "Full bottle", "https://buyperfumeinbangladesh.com/wp-content/uploads/2017/01/Versace-Eros-EDT-for-Men-100ml-Bottle.jpg"],
-  ["Davidoff Cool Water EDT For Men", 4500, "Full bottle", "https://buyperfumeinbangladesh.com/wp-content/uploads/2016/11/Davidoff-Cool-Water-EDT-for-Men-125ml.jpg"]
-].map(([name, price, color, image], index) => ({
-  id: `perfume-${String(index + 1).padStart(3, "0")}`,
+  ["perfume-001", "Rasasi Hawas Ice EDP for Men 100ml", 3100, "Full bottle", "https://images.unsplash.com/photo-1541643600914-78b084683601?auto=format&fit=crop&w=900&q=80", "A cool, fresh scent with a crisp citrus finish and long-lasting character."],
+  ["perfume-002", "Karus Gold Absolu by Khadlaj EDP 100ml", 3150, "Full bottle", "https://images.unsplash.com/photo-1528740561666-dc2479dc08ab?auto=format&fit=crop&w=900&q=80", "A warm perfume profile with a refined premium trail and smooth richness."],
+  ["perfume-003", "Al Rehab Choco Musk - Eau De Spray Perfume (50 ml)", 850, "Full bottle", "https://images.unsplash.com/photo-1594035910387-fea47794261f?auto=format&fit=crop&w=900&q=80", "Soft, sweet, and comforting with a gentle musky finish that feels easy to wear."],
+  ["perfume-004", "Rasasi Hawas Fire EDP 100ml", 3999, "Full bottle", "https://images.unsplash.com/photo-1617897903246-719242758050?auto=format&fit=crop&w=900&q=80", "Bold and spicy with a confident profile built for evenings and special occasions."],
+  ["perfume-005", "Lattafa Atlas Eau De Parfum 55ml", 3150, "Full bottle", "https://images.unsplash.com/photo-1585386959984-a4155224a1ad?auto=format&fit=crop&w=900&q=80", "Fresh marine notes with a modern, clean finish that stays polished all day."],
+  ["perfume-007", "Rayhaan Aquatica EDP 100ml", 2650, "Full bottle", "https://images.unsplash.com/photo-1523293182086-7651a899d37f?auto=format&fit=crop&w=900&q=80", "A tropical, clean signature with a smooth aquatic feel and lasting freshness."],
+  ["perfume-008", "Our Moment by One Direction For Women 50ml", 999, "Full bottle", "https://images.unsplash.com/photo-1528740561666-dc2479dc08ab?auto=format&fit=crop&w=900&q=80", "A sweet, soft fragrance with a light and youthful finish for everyday elegance."]
+].map(([id, name, price, color, image, description]) => ({
+  id,
   name,
   price,
   color,
   image,
-  description: "Best selling fragrance from Bangladesh perfume edit"
+  description
 }));
 products.push(...bestSellingPerfumes);
 
@@ -130,7 +131,6 @@ const pronounWatchCatalog = [
   ["Mark M6278 Ultra Thin Watch", 1299, "https://pronoun.pro/wp-content/uploads/2026/03/Toton-Balck-PN-12570-scaled.webp"],
   ["OMEGA ZQ98 Triple Calendar Watch", 1599, "https://pronoun.pro/wp-content/uploads/2026/02/Silver-white-PN-12560-scaled.webp"],
   ["Fastrack 9947 Mens Watch", 750, "https://pronoun.pro/wp-content/uploads/2025/10/Silver.jpg"],
-  ["Universe Point 2232B IBSO 7MM Ultra-Thin Rectangle Dial Classic Quartz Wristwatch", 1020, "https://pronoun.pro/wp-content/uploads/2025/09/White-PN-103-scaled.webp"],
   ["Hublot Gang Sang Spider Dial Watch", 1050, "https://pronoun.pro/wp-content/uploads/2025/12/Silver-Black-scaled.webp"],
   ["Forest F-740", 1399, "https://pronoun.pro/wp-content/uploads/2025/05/Picsart_25-06-19_23-29-14-052-min-scaled.webp"],
   ["Titan Chain Man's Watch", 899, "https://pronoun.pro/wp-content/uploads/2025/11/Silver.webp"],

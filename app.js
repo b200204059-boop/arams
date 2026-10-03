@@ -27,10 +27,8 @@ const products = [
   { id: "mens-shorts", name: "Everyday Shorts", groups: ["Men"], description: "Relaxed cotton with easy movement", price: 1850, tag: "New", color: "Olive", image: "https://images.unsplash.com/photo-1591195853828-11db59a44f6b?auto=format&fit=crop&w=900&q=80" },
   { id: "mens-trousers", name: "Daily Trousers", groups: ["Men", "Trousers"], description: "Tapered fit for everyday wear", price: 2650, tag: "Everyday", color: "Stone", image: "https://images.unsplash.com/photo-1473966968600-fa801b869a1a?auto=format&fit=crop&w=900&q=80" },
   { id: "relaxed-cargo-trousers", name: "Relaxed Cargo Trousers", groups: ["Men", "Trousers"], description: "Roomy pockets, easy cotton fit", price: 3150, tag: "New", color: "Olive", image: "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=900&q=80" },
-  { id: "weekend-chinos", name: "Weekend Chinos", groups: ["Men", "Trousers"], description: "Soft twill with a clean taper", price: 2850, tag: "Popular", color: "Navy", image: "https://images.unsplash.com/photo-1506629905607-d9d3b9a4f9d4?auto=format&fit=crop&w=900&q=80" },
   { id: "linen-wide-leg-trousers", name: "Linen Wide-Leg Trousers", groups: ["Women", "Trousers"], description: "Breathable linen with an easy drape", price: 2950, tag: "New", color: "Ivory", image: "https://images.unsplash.com/photo-1594633312681-425c7b97ccd1?auto=format&fit=crop&w=900&q=80" },
   { id: "city-pleat-trousers", name: "City Pleat Trousers", groups: ["Women", "Trousers"], description: "A neat pleat with a relaxed leg", price: 3250, tag: "Popular", color: "Charcoal", image: "https://images.unsplash.com/photo-1551488831-00ddcb6c6bd3?auto=format&fit=crop&w=900&q=80" },
-  { id: "everyday-taper-trousers", name: "Everyday Taper Trousers", groups: ["Women", "Trousers"], description: "Soft stretch fabric for busy days", price: 2750, tag: "Easy pick", color: "Black", image: "https://images.unsplash.com/photo-1506629905607-d9d3b9a4f9d4?auto=format&fit=crop&w=900&q=80" },
   { id: "utility-denim-trousers", name: "Utility Denim Trousers", groups: ["Men", "Trousers"], description: "Sturdy denim with a straight fit", price: 3050, tag: "Everyday", color: "Indigo", image: "https://images.unsplash.com/photo-1542272604-787c3835535d?auto=format&fit=crop&w=900&q=80" },
   { id: "linen-straight-trousers", name: "Linen Straight Trousers", groups: ["Women", "Trousers"], description: "Lightweight straight cut for warm days", price: 2850, tag: "New", color: "Sand", image: "https://images.unsplash.com/photo-1594633312681-425c7b97ccd1?auto=format&fit=crop&w=900&q=80" },
   { id: "workday-twill-trousers", name: "Workday Twill Trousers", groups: ["Men", "Trousers"], description: "Clean twill with a comfortable taper", price: 2950, tag: "Everyday", color: "Charcoal", image: "https://images.unsplash.com/photo-1473966968600-fa801b869a1a?auto=format&fit=crop&w=900&q=80" },
@@ -148,17 +146,20 @@ const gorurPants = [
 }));
 products.push(...gorurPants);
 const bestSellingPerfumes = [
-  ["Armaf Club De Nuit Intense EDP Man", 7200, "https://buyperfumeinbangladesh.com/wp-content/uploads/2020/11/Armaf-Club-de-Nuit-Intense-EDP-for-Men-200ml.jpg"],
-  ["Armaf Club de Nuit Intense EDT for Men", 4300, "https://buyperfumeinbangladesh.com/wp-content/uploads/2017/07/Armaf-Club-de-Nuit-Intense-EDT-for-Men-105m.jpg"],
-  ["Versace Eros Pour Homme EDT", 10700, "https://buyperfumeinbangladesh.com/wp-content/uploads/2017/01/Versace-Eros-EDT-for-Men-100ml-Bottle.jpg"],
-  ["Davidoff Cool Water EDT For Men", 4500, "https://buyperfumeinbangladesh.com/wp-content/uploads/2016/11/Davidoff-Cool-Water-EDT-for-Men-125ml.jpg"]
-].map(([name, price, image], index) => ({
-  id: `perfume-${String(index + 1).padStart(3, "0")}`,
+  ["perfume-001", "Rasasi Hawas Ice EDP for Men 100ml", 3100, "https://images.unsplash.com/photo-1541643600914-78b084683601?auto=format&fit=crop&w=900&q=80", "A cool, fresh scent with a crisp citrus finish and long-lasting character."],
+  ["perfume-002", "Karus Gold Absolu by Khadlaj EDP 100ml", 3150, "https://images.unsplash.com/photo-1528740561666-dc2479dc08ab?auto=format&fit=crop&w=900&q=80", "A warm perfume profile with a refined premium trail and smooth richness."],
+  ["perfume-003", "Al Rehab Choco Musk - Eau De Spray Perfume (50 ml)", 850, "https://images.unsplash.com/photo-1594035910387-fea47794261f?auto=format&fit=crop&w=900&q=80", "Soft, sweet, and comforting with a gentle musky finish that feels easy to wear."],
+  ["perfume-004", "Rasasi Hawas Fire EDP 100ml", 3999, "https://images.unsplash.com/photo-1617897903246-719242758050?auto=format&fit=crop&w=900&q=80", "Bold and spicy with a confident profile built for evenings and special occasions."],
+  ["perfume-005", "Lattafa Atlas Eau De Parfum 55ml", 3150, "https://images.unsplash.com/photo-1585386959984-a4155224a1ad?auto=format&fit=crop&w=900&q=80", "Fresh marine notes with a modern, clean finish that stays polished all day."],
+  ["perfume-007", "Rayhaan Aquatica EDP 100ml", 2650, "https://images.unsplash.com/photo-1523293182086-7651a899d37f?auto=format&fit=crop&w=900&q=80", "A tropical, clean signature with a smooth aquatic feel and lasting freshness."],
+  ["perfume-008", "Our Moment by One Direction For Women 50ml", 999, "https://images.unsplash.com/photo-1528740561666-dc2479dc08ab?auto=format&fit=crop&w=900&q=80", "A sweet, soft fragrance with a light and youthful finish for everyday elegance."]
+].map(([id, name, price, image, description], index) => ({
+  id,
   name,
-  groups: ["Perfumes", "Men"],
-  description: "Best selling fragrance from Bangladesh perfume edit",
+  groups: ["Perfumes", index % 2 === 0 ? "Men" : "Women"],
+  description,
   price,
-  tag: "Best seller",
+  tag: index < 4 ? "Best seller" : "New arrival",
   color: "Full bottle",
   image
 }));
@@ -205,7 +206,6 @@ const pronounWatchCatalog = [
   ["Mark M6278 Ultra Thin Watch", 1299, "https://pronoun.pro/wp-content/uploads/2026/03/Toton-Balck-PN-12570-scaled.webp"],
   ["OMEGA ZQ98 Triple Calendar Watch", 1599, "https://pronoun.pro/wp-content/uploads/2026/02/Silver-white-PN-12560-scaled.webp"],
   ["Fastrack 9947 Mens Watch", 750, "https://pronoun.pro/wp-content/uploads/2025/10/Silver.jpg"],
-  ["Universe Point 2232B IBSO 7MM Ultra-Thin Rectangle Dial Classic Quartz Wristwatch", 1020, "https://pronoun.pro/wp-content/uploads/2025/09/White-PN-103-scaled.webp"],
   ["Hublot Gang Sang Spider Dial Watch", 1050, "https://pronoun.pro/wp-content/uploads/2025/12/Silver-Black-scaled.webp"],
   ["Forest F-740", 1399, "https://pronoun.pro/wp-content/uploads/2025/05/Picsart_25-06-19_23-29-14-052-min-scaled.webp"],
   ["Titan Chain Man's Watch", 899, "https://pronoun.pro/wp-content/uploads/2025/11/Silver.webp"],
@@ -278,7 +278,8 @@ let toastTimer;
 function visibleProducts() {
   let result = products.filter((product) => {
     const matchesCategory = activeCategory === "All" || product.groups.includes(activeCategory);
-    const matchesSearch = `${product.name} ${product.description} ${product.groups.join(" ")} ${product.color}`.toLowerCase().includes(searchTerm);
+    const searchableText = `${product.name} ${product.description} ${product.groups.join(" ")} ${product.color}`.toLowerCase();
+    const matchesSearch = searchTerm.split(/\s+/).filter(Boolean).every((term) => searchableText.includes(term));
     return matchesCategory && matchesSearch;
   });
   if (activeSort === "low-high") result = [...result].sort((a, b) => a.price - b.price);
@@ -287,6 +288,7 @@ function visibleProducts() {
 }
 
 function productDetailsUrl(product) {
+  const images = Array.isArray(product.gallery) && product.gallery.length ? product.gallery : [product.image];
   const query = new URLSearchParams({
     id: product.id,
     name: product.name,
@@ -294,6 +296,7 @@ function productDetailsUrl(product) {
     color: product.color,
     description: product.description,
     image: product.image,
+    images: JSON.stringify(images),
   });
   return `/product/${encodeURIComponent(product.id)}?${query}`;
 }
@@ -301,6 +304,19 @@ function productDetailsUrl(product) {
 function renderProducts() {
   const items = visibleProducts();
   document.querySelector("#item-total").textContent = `${String(items.length).padStart(2, "0")} products`;
+  if (!items.length) {
+    grid.innerHTML = `
+      <div class="search-empty-state">
+        <p>${searchTerm ? "No products match your search." : "No products in this category."}</p>
+        <button id="clear-search" type="button">Show all products</button>
+      </div>`;
+    grid.querySelector("#clear-search").addEventListener("click", () => {
+      document.querySelector("#search-input").value = "";
+      searchTerm = "";
+      selectCategory("All");
+    });
+    return;
+  }
   grid.innerHTML = items.map((product, index) => `
     <article class="product-card" style="animation-delay:${index * 55}ms">
       <div class="product-image-wrap">
@@ -404,7 +420,13 @@ document.addEventListener("click", (event) => {
   if (categoryLink) selectCategory(categoryLink.dataset.category);
 });
 
-document.querySelector("#search-form").addEventListener("submit", (event) => event.preventDefault());
+document.querySelector("#search-form").addEventListener("submit", (event) => {
+  event.preventDefault();
+  searchTerm = document.querySelector("#search-input").value.trim().toLowerCase();
+  selectCategory("All");
+  document.querySelector("#shop").scrollIntoView({ behavior: "smooth", block: "start" });
+  grid.focus({ preventScroll: true });
+});
 document.querySelector("#search-input").addEventListener("input", (event) => {
   searchTerm = event.target.value.trim().toLowerCase();
   renderProducts();
