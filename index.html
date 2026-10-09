@@ -3,279 +3,504 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#211b15">
-  <meta name="description" content="Shop sunglasses, watches, and everyday style for men and women at ARAMS.">
-  <title>ARAMS — Accessories and everyday style</title>
+  <meta name="theme-color" content="#12100e">
+  <meta name="description" content="Shop luxury sunglasses, vintage watches, knitwear, katua, and tailored essentials at ARAMS Haute Atelier. Cash on Delivery across all 64 districts in Bangladesh.">
+  <title>ARAMS — Modern Haute Atelier & Everyday Luxury</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,400;1,600&family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,500;0,600;0,700;0,800;1,400;1,600;1,700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
   <script src="app.js" defer></script>
 </head>
 <body class="home-page">
-  <div class="announcement">CASH ON DELIVERY ACROSS ALL 64 DISTRICTS · CALL TO ORDER 01815653564</div>
-  <header class="site-header">
-    <a class="wordmark" href="#top" aria-label="ARAMS home">ARAMS<span>.</span></a>
-    <form class="header-search" id="search-form" role="search">
-      <input id="search-input" type="search" placeholder="Search the ARAMS edit" aria-label="Search products">
-      <button type="submit">Search</button>
-    </form>
-    <button class="bag-button" id="open-bag" type="button" aria-label="Open shopping bag">
-      Cart <span class="bag-count" id="bag-count">0</span>
-    </button>
-  </header>
-  <nav class="main-nav" aria-label="Shop categories">
-    <a href="#shop" data-category="All">Shop all</a>
-    <a href="#shop" data-category="Men">Men</a>
-    <a href="#shop" data-category="Women">Women</a>
-    <a href="#shop" data-category="Trousers">Trousers</a>
-    <a href="#shop" data-category="Pants">Pants</a>
-    <a href="#shop" data-category="Perfumes">Perfumes</a>
-    <a href="#shop" data-category="Polos">Polos</a>
-    <a href="#shop" data-category="Katua">Katua</a>
-    <a href="#shop" data-category="Sunglasses">Sunglasses</a>
-    <a href="#shop" data-category="Watches">Watches</a>
-    <a href="#shop" data-category="Bags">Bags</a>
-    <a href="/watch/casio-a159wa">Featured watch</a>
-    <a href="/buy">Buy landing page</a>
-    <a href="#footer">Contact</a>
-  </nav>
-
-  <div class="luxury-promo" aria-label="Luxury brand showcase">
-    <div class="luxury-promo-copy">
-      <p class="eyebrow"><span class="eyebrow-mark"></span> Curated for city life</p>
-      <h2>Minimal style. Maximum presence.</h2>
-      <p>Discover elevated essentials designed for workdays, weekends, and everything in between.</p>
-      <div class="hero-actions">
-        <a class="hero-cta" href="#shop">Shop the edit <span aria-hidden="true">→</span></a>
-        <a class="hero-secondary" href="#departments">Browse categories</a>
-      </div>
-    </div>
-    <div class="luxury-promo-grid">
-      <div><span>Premium</span><strong>Accessories</strong></div>
-      <div><span>Fresh</span><strong>Best sellers</strong></div>
-      <div><span>Fast</span><strong>WhatsApp orders</strong></div>
+  <div class="announcement">
+    <div class="announcement-content">
+      <span class="announcement-pill">✦ SS26 ATELIER DROP</span>
+      <span>CASH ON DELIVERY ACROSS ALL 64 DISTRICTS</span>
+      <span class="announcement-dot">·</span>
+      <span>VIP CONCIERGE &amp; WHATSAPP ORDERS: <a href="tel:+8801815653564">01815653564</a></span>
+      <span class="announcement-dot">·</span>
+      <span>TRY BEFORE YOU PAY</span>
     </div>
   </div>
 
+  <header class="site-header">
+    <div class="header-brand-block">
+      <a class="wordmark" href="#top" aria-label="ARAMS home">ARAMS<span>.</span></a>
+      <span class="brand-subtag">HAUTE ATELIER · EST. 2026</span>
+    </div>
+
+    <form class="header-search" id="search-form" role="search">
+      <svg class="search-svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+      <input id="search-input" type="search" placeholder="Search sunglasses, watches, polo knits, katua..." aria-label="Search products">
+      <button type="submit">Search</button>
+    </form>
+
+    <div class="header-actions">
+      <a class="header-concierge-btn" href="https://wa.me/8801815653564" target="_blank" rel="noreferrer" title="Chat with personal stylist on WhatsApp">
+        <span class="pulse-indicator-green"></span>
+        <span class="concierge-text">WhatsApp Stylist</span>
+      </a>
+      <button class="bag-button" id="open-bag" type="button" aria-label="Open shopping bag">
+        <span class="bag-label">Bag</span>
+        <span class="bag-count" id="bag-count">0</span>
+      </button>
+    </div>
+  </header>
+
+  <nav class="main-nav" aria-label="Shop categories">
+    <a href="#shop" data-category="All" class="nav-active">Shop all</a>
+    <a href="#shop" data-category="Sunglasses">Sunglasses</a>
+    <a href="#shop" data-category="Watches">Watches</a>
+    <a href="#shop" data-category="Polos">Knit Polos</a>
+    <a href="#shop" data-category="Katua">Katua</a>
+    <a href="#shop" data-category="Trousers">Trousers</a>
+    <a href="#shop" data-category="Pants">Pants</a>
+    <a href="#shop" data-category="Perfumes">Perfumes</a>
+    <a href="#shop" data-category="Bags">Bags</a>
+    <a href="#shop" data-category="Men">Men</a>
+    <a href="#shop" data-category="Women">Women</a>
+    <a href="/watch/casio-a159wa" class="nav-special">Featured Watch</a>
+    <a href="#lookbook" class="nav-lookbook">Lookbook</a>
+    <a href="/buy">Order Page</a>
+    <a href="#footer">Contact</a>
+  </nav>
+
   <main id="top">
-    <section class="hero" aria-labelledby="hero-title">
-      <div class="hero-copy">
-        <p class="eyebrow"><span class="eyebrow-mark"></span> The ARAMS edit</p>
-        <h1 id="hero-title">Everyday pieces<br><span>made to move.</span></h1>
-        <p class="hero-description">Comfortable accessories and ready-to-wear essentials for work, weekends, and everything in between.</p>
-        <div class="hero-actions">
-          <a class="hero-cta" href="#shop">Shop now <span aria-hidden="true">→</span></a>
-          <a class="hero-secondary" href="#departments">Browse categories</a>
+    <!-- FASHION HERO SECTION -->
+    <section class="fashion-hero" aria-labelledby="hero-title">
+      <div class="fashion-hero-grid">
+        <div class="fashion-hero-copy">
+          <div class="hero-capsule-tag">
+            <span class="pulsing-amber"></span>
+            <span>AUTUMN / WINTER 2026 CAPSULE DROP</span>
+          </div>
+
+          <h1 id="hero-title">
+            Modern Haute.<br>
+            <span class="editorial-serif">Everyday</span> Presence<span>.</span>
+          </h1>
+
+          <p class="hero-description">
+            Sculpted acetate eyewear, vintage Japanese-crafted chronographs, textured knitwear, and effortless tailoring designed for modern confidence. Delivered with Cash on Delivery across all 64 districts.
+          </p>
+
+          <div class="hero-actions">
+            <a class="hero-cta" href="#shop">Explore The Edit <span aria-hidden="true">→</span></a>
+            <a class="hero-secondary" href="#lookbook">Shop The Lookbook</a>
+            <a class="hero-wa-btn" href="https://wa.me/8801815653564?text=Hi%20ARAMS,%20I%20am%20interested%20in%20your%20fashion%20collection" target="_blank" rel="noreferrer">
+              <span class="wa-dot"></span> WhatsApp Order
+            </a>
+          </div>
+
+          <div class="hero-trust-metrics">
+            <div class="metric-card">
+              <strong>12k+</strong>
+              <span>Pieces Styled</span>
+            </div>
+            <div class="metric-divider"></div>
+            <div class="metric-card">
+              <strong>64</strong>
+              <span>Districts COD</span>
+            </div>
+            <div class="metric-divider"></div>
+            <div class="metric-card">
+              <strong>4.9 ★</strong>
+              <span>Client Rating</span>
+            </div>
+          </div>
         </div>
-        <span class="hero-index">ARAMS · EVERYDAY COLLECTION · 2026</span>
-      </div>
-      <div class="hero-image" role="img" aria-label="Modern accessories and fashion editorial">
-        <div class="image-caption"><span>THE EVERYDAY EDIT</span><span>ARAMS / 01</span></div>
-        <div class="hero-floating-card">
-          <span class="mini-pill">New season</span>
-          <strong>Premium picks</strong>
-          <small>Watches · Shades · Everyday fits</small>
+
+        <div class="fashion-hero-visual">
+          <div class="hero-visual-frame" role="img" aria-label="ARAMS High Fashion Editorial 2026">
+            <div class="hero-tag-top">
+              <span>EDITORIAL NO. 01</span>
+              <span>ARAMS / ATELIER</span>
+            </div>
+
+            <!-- Floating Spotlight: Casio Vintage Watch -->
+            <div class="hero-spotlight-pill hero-spotlight--watch">
+              <img src="https://nagram.com.bd/cdn/shop/files/a14c72d7-60e2-478e-bdb5-4f2ccf62b651.jpg?v=1785762354&amp;width=300" alt="Casio Vintage A-159WA">
+              <div class="spotlight-copy">
+                <span class="spotlight-tag">Special Drop</span>
+                <strong>Casio A-159WA</strong>
+                <small>৳990 · Steel</small>
+              </div>
+              <button type="button" class="spotlight-btn" data-buy="casio-a159wa" title="Instant Buy Casio">Buy Now</button>
+            </div>
+
+            <!-- Floating Spotlight: Sola Sunglasses -->
+            <div class="hero-spotlight-pill hero-spotlight--shades">
+              <img src="https://images.unsplash.com/photo-1511499767150-a48a237f0083?auto=format&amp;fit=crop&amp;w=300&amp;q=80" alt="Sola Acetate Frames">
+              <div class="spotlight-copy">
+                <span class="spotlight-tag">Bestseller</span>
+                <strong>Sola Frames</strong>
+                <small>৳1,850 · Tortoise</small>
+              </div>
+              <button type="button" class="spotlight-btn spotlight-btn--bag" data-add="sola-frames" title="Add Sola Frames to bag">+ Bag</button>
+            </div>
+
+            <div class="hero-atelier-seal">
+              <span>ARAMS</span>
+              <strong>ATELIER</strong>
+              <small>2026</small>
+            </div>
+          </div>
         </div>
-        <div class="image-stamp">Find<br>your look.</div>
       </div>
     </section>
 
-    <section class="luxury-collection" aria-labelledby="luxury-title">
-      <div class="luxury-copy">
-        <p class="eyebrow">Signature collection</p>
-        <h2 id="luxury-title">Premium essentials for everyday confidence<span>.</span></h2>
-        <p>Thoughtful pieces for workdays, weekends, and everything in between — refined, wearable, and ready to ship.</p>
-        <div class="luxury-actions">
-          <a class="hero-cta" href="#shop">Shop the edit <span aria-hidden="true">→</span></a>
-          <a class="hero-secondary" href="#departments">Browse all</a>
-        </div>
+    <!-- INFINITE FASHION MARQUEE -->
+    <div class="fashion-marquee" aria-hidden="true">
+      <div class="fashion-marquee-track">
+        <span>HAUTE MINIMALISM</span>
+        <span class="star">✦</span>
+        <span>CASH ON DELIVERY IN ALL 64 DISTRICTS</span>
+        <span class="star">✦</span>
+        <span>VINTAGE STEEL CHRONOGRAPHS</span>
+        <span class="star">✦</span>
+        <span>UV400 POLARIZED SUNGLASSES</span>
+        <span class="star">✦</span>
+        <span>HANDCRAFTED WOODEN KATUA</span>
+        <span class="star">✦</span>
+        <span>KNITTED DIAMOND POLOS</span>
+        <span class="star">✦</span>
+        <span>24/7 WHATSAPP CONCIERGE: 01815653564</span>
+        <span class="star">✦</span>
+        <span>EASY 7-DAY EXCHANGES</span>
+        <span class="star">✦</span>
+        <span>HAUTE MINIMALISM</span>
+        <span class="star">✦</span>
+        <span>CASH ON DELIVERY IN ALL 64 DISTRICTS</span>
+        <span class="star">✦</span>
+        <span>VINTAGE STEEL CHRONOGRAPHS</span>
+        <span class="star">✦</span>
+        <span>UV400 POLARIZED SUNGLASSES</span>
+        <span class="star">✦</span>
+        <span>HANDCRAFTED WOODEN KATUA</span>
+        <span class="star">✦</span>
+        <span>KNITTED DIAMOND POLOS</span>
+        <span class="star">✦</span>
+        <span>24/7 WHATSAPP CONCIERGE: 01815653564</span>
+        <span class="star">✦</span>
       </div>
-      <div class="luxury-cards" aria-label="Featured mood board">
-        <div class="luxury-panel luxury-panel--dark">
-          <span>Limited drop</span>
-          <strong>New season</strong>
-        </div>
-        <div class="luxury-panel luxury-panel--light">
-          <span>Top pick</span>
-          <strong>Watches & shades</strong>
-        </div>
-      </div>
-    </section>
+    </div>
 
-    <section class="buy-promise" aria-labelledby="promise-title">
-      <div class="section-heading compact-heading">
+    <!-- CURATED FASHION DEPARTMENTS -->
+    <section class="departments-section" id="departments" aria-labelledby="department-title">
+      <div class="section-heading">
         <div>
-          <p class="eyebrow">How buying works</p>
-          <h2 id="promise-title">Order in three easy steps<span>.</span></h2>
+          <p class="eyebrow"><span class="eyebrow-mark"></span> Curated Departments</p>
+          <h2 id="department-title">Signature Wardrobe Pillars<span>.</span></h2>
         </div>
+        <a class="text-link" href="#shop" data-category="All">Explore full catalog <span aria-hidden="true">↗</span></a>
       </div>
-      <div class="promise-grid">
-        <article class="promise-card">
-          <span class="promise-number">01</span>
-          <h3>Pick your style</h3>
-          <p>Browse the ARAMS edit and choose the accessories or essentials that match your day.</p>
-        </article>
-        <article class="promise-card promise-card--highlight">
-          <span class="promise-number">02</span>
-          <h3>Send order details</h3>
-          <p>Fill in your name, phone, and delivery information in the checkout flow to place your order.</p>
-        </article>
-        <article class="promise-card">
-          <span class="promise-number">03</span>
-          <h3>Track every purchase</h3>
-          <p>Each new order is saved in the admin dashboard, so you can see exactly what was bought and by whom.</p>
-        </article>
+      <div class="departments-grid">
+        <a class="dept-card" href="#shop" data-category="Sunglasses" style="--dept-bg:url('https://images.unsplash.com/photo-1511499767150-a48a237f0083?auto=format&amp;fit=crop&amp;w=800&amp;q=80')">
+          <div class="dept-card-inner">
+            <span class="dept-kicker">Statement Eyewear</span>
+            <h3>Sunglasses</h3>
+            <p>Sculpted acetates &amp; UV400 lenses</p>
+            <span class="dept-action-text">Shop Sunglasses <span aria-hidden="true">→</span></span>
+          </div>
+        </a>
+        <a class="dept-card" href="#shop" data-category="Watches" style="--dept-bg:url('https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&amp;fit=crop&amp;w=800&amp;q=80')">
+          <div class="dept-card-inner">
+            <span class="dept-kicker">Precision Horology</span>
+            <h3>Watches</h3>
+            <p>Vintage steel &amp; modern chronos</p>
+            <span class="dept-action-text">Shop Watches <span aria-hidden="true">→</span></span>
+          </div>
+        </a>
+        <a class="dept-card" href="#shop" data-category="Polos" style="--dept-bg:url('https://gorurghash.com/wp-content/uploads/2026/06/DSC0928-copy2.jpg')">
+          <div class="dept-card-inner">
+            <span class="dept-kicker">Luxury Knitwear</span>
+            <h3>Knit Polos</h3>
+            <p>Diamond knit &amp; breathable drape</p>
+            <span class="dept-action-text">Shop Polos <span aria-hidden="true">→</span></span>
+          </div>
+        </a>
+        <a class="dept-card" href="#shop" data-category="Katua" style="--dept-bg:url('https://goodybro.com/cdn/shop/files/HK_Wooden_Dark_Olive.png?v=1790756194&amp;width=800')">
+          <div class="dept-card-inner">
+            <span class="dept-kicker">Artisan Essentials</span>
+            <h3>Katua</h3>
+            <p>Wooden button Henley &amp; V-neck drape</p>
+            <span class="dept-action-text">Shop Katua <span aria-hidden="true">→</span></span>
+          </div>
+        </a>
+        <a class="dept-card" href="#shop" data-category="Trousers" style="--dept-bg:url('https://images.unsplash.com/photo-1473966968600-fa801b869a1a?auto=format&amp;fit=crop&amp;w=800&amp;q=80')">
+          <div class="dept-card-inner">
+            <span class="dept-kicker">Modern Tailoring</span>
+            <h3>Pants &amp; Trousers</h3>
+            <p>Gurkha pleats &amp; relaxed fits</p>
+            <span class="dept-action-text">Shop Trousers <span aria-hidden="true">→</span></span>
+          </div>
+        </a>
+        <a class="dept-card" href="#shop" data-category="Bags" style="--dept-bg:url('https://images.unsplash.com/photo-1548036328-c9fa89d128fa?auto=format&amp;fit=crop&amp;w=800&amp;q=80')">
+          <div class="dept-card-inner">
+            <span class="dept-kicker">Leather Goods</span>
+            <h3>Carryalls &amp; Bags</h3>
+            <p>Everyday totes &amp; weekenders</p>
+            <span class="dept-action-text">Shop Bags <span aria-hidden="true">→</span></span>
+          </div>
+        </a>
       </div>
     </section>
 
+    <!-- INTERACTIVE EDITORIAL LOOKBOOK SECTION -->
+    <section class="lookbook-section" id="lookbook" aria-labelledby="lookbook-title">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow"><span class="eyebrow-mark"></span> Editorial Capsule 01</p>
+          <h2 id="lookbook-title">Shop The Runway Look<span>.</span></h2>
+        </div>
+        <span class="lookbook-meta-tag">ATELIER · 2026 EDITORIAL</span>
+      </div>
+
+      <div class="lookbook-grid">
+        <div class="lookbook-visual">
+          <img src="https://images.unsplash.com/photo-1539109136881-3be0616acf4b?auto=format&amp;fit=crop&amp;w=1200&amp;q=85" alt="Lookbook Model Editorial Shot" loading="lazy">
+          
+          <!-- Interactive Outfit Pins -->
+          <div class="lookbook-pin pin--shades" style="top: 24%; left: 52%;">
+            <span class="pin-ring"></span>
+            <div class="pin-popover">
+              <strong>Sola Frames</strong>
+              <span>৳1,850 · Acetate</span>
+              <button type="button" data-add="sola-frames">+ Bag</button>
+            </div>
+          </div>
+
+          <div class="lookbook-pin pin--watch" style="top: 60%; left: 34%;">
+            <span class="pin-ring"></span>
+            <div class="pin-popover">
+              <strong>Casio A-159WA</strong>
+              <span>৳990 · Steel Watch</span>
+              <button type="button" data-buy="casio-a159wa">Buy ৳990</button>
+            </div>
+          </div>
+
+          <div class="lookbook-pin pin--trousers" style="top: 78%; left: 50%;">
+            <span class="pin-ring"></span>
+            <div class="pin-popover">
+              <strong>Daily Trousers</strong>
+              <span>৳2,650 · Stone</span>
+              <button type="button" data-add="mens-trousers">+ Bag</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="lookbook-details">
+          <div class="lookbook-header">
+            <span class="lookbook-kicker">Style Breakdown</span>
+            <h3>The Urban Minimalist Uniform</h3>
+            <p>Curated by ARAMS styling directors. Designed around neutral earthy palettes, refined metallic horology, and sculpted eyewear for an immaculate, modern street silhouette.</p>
+          </div>
+
+          <div class="lookbook-pieces">
+            <article class="lookbook-piece-card">
+              <img src="https://nagram.com.bd/cdn/shop/files/a14c72d7-60e2-478e-bdb5-4f2ccf62b651.jpg?v=1785762354&amp;width=200" alt="Casio A-159WA">
+              <div class="piece-copy">
+                <strong>Casio A-159WA Digital Watch</strong>
+                <p>Stainless steel bracelet, digital face, water resistant</p>
+                <span class="piece-price">৳990</span>
+              </div>
+              <div class="piece-actions">
+                <button type="button" data-add="casio-a159wa" class="btn-subtle">+ Bag</button>
+                <button type="button" data-buy="casio-a159wa" class="btn-direct">Buy</button>
+              </div>
+            </article>
+
+            <article class="lookbook-piece-card">
+              <img src="https://images.unsplash.com/photo-1511499767150-a48a237f0083?auto=format&amp;fit=crop&amp;w=200&amp;q=80" alt="Sola Frames">
+              <div class="piece-copy">
+                <strong>Sola Acetate Sunglasses</strong>
+                <p>Sculpted premium tortoise acetate, UV400 lenses</p>
+                <span class="piece-price">৳1,850</span>
+              </div>
+              <div class="piece-actions">
+                <button type="button" data-add="sola-frames" class="btn-subtle">+ Bag</button>
+                <button type="button" data-buy="sola-frames" class="btn-direct">Buy</button>
+              </div>
+            </article>
+
+            <article class="lookbook-piece-card">
+              <img src="https://images.unsplash.com/photo-1473966968600-fa801b869a1a?auto=format&amp;fit=crop&amp;w=200&amp;q=80" alt="Daily Trousers">
+              <div class="piece-copy">
+                <strong>Daily Trousers in Stone</strong>
+                <p>Relaxed tailored fit with clean pleats &amp; drape</p>
+                <span class="piece-price">৳2,650</span>
+              </div>
+              <div class="piece-actions">
+                <button type="button" data-add="mens-trousers" class="btn-subtle">+ Bag</button>
+                <button type="button" data-buy="mens-trousers" class="btn-direct">Buy</button>
+              </div>
+            </article>
+          </div>
+
+          <div class="lookbook-bundle-box">
+            <div class="bundle-summary">
+              <div>
+                <span>Complete 3-Piece Capsule</span>
+                <strong>৳5,490</strong>
+              </div>
+              <small>Cash on Delivery across all 64 districts included</small>
+            </div>
+            <a class="bundle-btn" href="https://wa.me/8801815653564?text=Hi%20ARAMS,%20I%20would%20like%20to%20order%20the%20complete%20Capsule%2001%20Look%20(Casio%20Watch,%20Sola%20Frames,%20Daily%20Trousers)%20for%205490%20BDT" target="_blank" rel="noreferrer">
+              Order Complete Look via WhatsApp →
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CASIO SPOTLIGHT BANNER -->
+    <section class="spotlight-capsule" aria-labelledby="spotlight-title">
+      <div class="spotlight-box">
+        <div class="spotlight-media">
+          <img src="https://nagram.com.bd/cdn/shop/files/a14c72d7-60e2-478e-bdb5-4f2ccf62b651.jpg?v=1785762354&amp;width=900" alt="Casio A-159WA Steel Digital Watch" loading="lazy">
+          <span class="spotlight-badge">LIMITED TIME OFFER · ৳990</span>
+        </div>
+        <div class="spotlight-info">
+          <p class="eyebrow"><span class="eyebrow-mark"></span> Iconic Timepiece Spotlight</p>
+          <h2 id="spotlight-title">Casio A-159WA Vintage Steel Watch<span>.</span></h2>
+          <p class="spotlight-lead">
+            The definitive retro-classic digital horology masterpiece. Featuring an adjustable stainless steel bracelet, crisp LCD display with green micro-light, daily alarm, stopwatch, and water-resistant casing.
+          </p>
+          
+          <div class="spotlight-specs">
+            <div class="spec-pill"><span>Movement</span><strong>Quartz Digital</strong></div>
+            <div class="spec-pill"><span>Strap</span><strong>Stainless Steel</strong></div>
+            <div class="spec-pill"><span>Price</span><strong>Special ৳990</strong></div>
+            <div class="spec-pill"><span>Delivery</span><strong>Nationwide COD</strong></div>
+          </div>
+
+          <div class="spotlight-actions">
+            <button class="hero-cta" type="button" data-buy="casio-a159wa">Instant Order ৳990 <span aria-hidden="true">→</span></button>
+            <button class="hero-secondary" type="button" data-add="casio-a159wa">+ Add to Bag</button>
+            <a class="text-link" href="/watch/casio-a159wa">Full Details <span aria-hidden="true">↗</span></a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- BEST SELLERS PREVIEW -->
     <section class="featured-preview" aria-labelledby="featured-preview-title">
       <div class="section-heading compact-heading">
         <div>
-          <p class="eyebrow">Build your look</p>
-          <h2 id="featured-preview-title">Best-selling picks this week<span>.</span></h2>
+          <p class="eyebrow"><span class="eyebrow-mark"></span> Build your look</p>
+          <h2 id="featured-preview-title">Standout Pieces This Week<span>.</span></h2>
         </div>
         <a class="text-link" href="#shop">See all products <span aria-hidden="true">↗</span></a>
       </div>
       <div class="featured-preview-grid premium-grid">
         <article class="preview-card highlight-card">
-          <img src="https://images.unsplash.com/photo-1511499767150-a48a237f0083?auto=format&fit=crop&w=900&q=80" alt="Sola Frames sunglasses">
+          <img src="https://images.unsplash.com/photo-1511499767150-a48a237f0083?auto=format&amp;fit=crop&amp;w=900&amp;q=80" alt="Sola Frames sunglasses">
           <div class="preview-copy">
             <span>New arrival</span>
             <strong>Sola Frames</strong>
             <small>৳1,850</small>
+            <div class="preview-actions">
+              <button type="button" data-add="sola-frames">+ Bag</button>
+              <button type="button" data-buy="sola-frames">Buy</button>
+            </div>
           </div>
         </article>
         <article class="preview-card highlight-card">
-          <img src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=900&q=80" alt="Field Watch watch">
+          <img src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&amp;fit=crop&amp;w=900&amp;q=80" alt="Field Watch watch">
           <div class="preview-copy">
             <span>Best seller</span>
             <strong>Field Watch</strong>
             <small>৳3,450</small>
+            <div class="preview-actions">
+              <button type="button" data-add="field-watch">+ Bag</button>
+              <button type="button" data-buy="field-watch">Buy</button>
+            </div>
           </div>
         </article>
         <article class="preview-card highlight-card">
-          <img src="https://images.unsplash.com/photo-1548036328-c9fa89d128fa?auto=format&fit=crop&w=900&q=80" alt="Weekend Tote bag">
+          <img src="https://images.unsplash.com/photo-1548036328-c9fa89d128fa?auto=format&amp;fit=crop&amp;w=900&amp;q=80" alt="Weekend Tote bag">
           <div class="preview-copy">
             <span>Everyday carry</span>
             <strong>Weekend Tote</strong>
             <small>৳2,950</small>
+            <div class="preview-actions">
+              <button type="button" data-add="weekend-tote">+ Bag</button>
+              <button type="button" data-buy="weekend-tote">Buy</button>
+            </div>
           </div>
         </article>
         <article class="preview-card highlight-card">
-          <img src="https://images.unsplash.com/photo-1473966968600-fa801b869a1a?auto=format&fit=crop&w=900&q=80" alt="Daily Trousers">
+          <img src="https://images.unsplash.com/photo-1473966968600-fa801b869a1a?auto=format&amp;fit=crop&amp;w=900&amp;q=80" alt="Daily Trousers">
           <div class="preview-copy">
             <span>Daily essential</span>
             <strong>Daily Trousers</strong>
             <small>৳2,650</small>
+            <div class="preview-actions">
+              <button type="button" data-add="mens-trousers">+ Bag</button>
+              <button type="button" data-buy="mens-trousers">Buy</button>
+            </div>
           </div>
         </article>
       </div>
     </section>
 
-    <section class="category-section" id="departments" aria-labelledby="department-title">
-      <div class="section-heading">
-        <div><p class="eyebrow">Find your fit</p><h2 id="department-title">Shop by category<span>.</span></h2></div>
-      </div>
-      <div class="category-grid">
-        <a class="category-card" href="#shop" data-category="Sunglasses" style="--category-image:url('https://images.unsplash.com/photo-1511499767150-a48a237f0083?auto=format&fit=crop&w=700&q=80')"><span>Sunglasses</span><span aria-hidden="true">↗</span></a>
-        <a class="category-card" href="#shop" data-category="Watches" style="--category-image:url('https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=700&q=80')"><span>Watches</span><span aria-hidden="true">↗</span></a>
-        <a class="category-card" href="#shop" data-category="Men" style="--category-image:url('https://images.unsplash.com/photo-1516257984-b1b4d707412e?auto=format&fit=crop&w=700&q=80')"><span>Men</span><span aria-hidden="true">↗</span></a>
-        <a class="category-card" href="#shop" data-category="Women" style="--category-image:url('https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=700&q=80')"><span>Women</span><span aria-hidden="true">↗</span></a>
-      </div>
-    </section>
-
-    <section class="featured-picks" aria-labelledby="featured-title">
-      <div class="section-heading">
-        <div>
-          <p class="eyebrow">Today's standout picks</p>
-          <h2 id="featured-title">Built for everyday confidence<span>.</span></h2>
-        </div>
-        <a class="text-link" href="#shop">Browse all <span aria-hidden="true">↗</span></a>
-      </div>
-      <div class="feature-card-grid">
-        <article class="feature-card feature-card--dark">
-          <div>
-            <p class="feature-kicker">Fresh drop</p>
-            <h3>Street-smart essentials</h3>
-          </div>
-          <p>Minimal silhouettes, smart textures, and wearable pieces for daily routines.</p>
-          <a href="#shop" data-category="All">Shop now <span aria-hidden="true">→</span></a>
-        </article>
-        <article class="feature-card feature-card--light">
-          <div>
-            <p class="feature-kicker">Popular</p>
-            <h3>Clean accessories</h3>
-          </div>
-          <p>Watches, shades, bags, and finishing touches that elevate the whole look.</p>
-          <a href="#shop" data-category="Watches">View picks <span aria-hidden="true">→</span></a>
-        </article>
-        <article class="feature-card feature-card--accent">
-          <div>
-            <p class="feature-kicker">Best sellers</p>
-            <h3>Ready to ship</h3>
-          </div>
-          <p>Fast ordering, easy payment, and a collection that feels effortless from first click to final delivery.</p>
-          <a href="#shop" data-category="Sunglasses">See styles <span aria-hidden="true">→</span></a>
-        </article>
-      </div>
-    </section>
-
-    <section class="service-strip" aria-label="Shopping information">
-      <div><strong>01</strong><span>Cash on delivery nationwide</span></div>
-      <div><strong>02</strong><span>Men, women, and unisex fits</span></div>
-      <div><strong>03</strong><span>Easy WhatsApp ordering</span></div>
-    </section>
-
+    <!-- TRUST SECTION -->
     <section class="trust-section" aria-labelledby="trust-title">
       <div class="section-heading compact-heading">
         <div>
-          <p class="eyebrow">Why choose ARAMS</p>
-          <h2 id="trust-title">Style that feels easy to buy<span>.</span></h2>
+          <p class="eyebrow"><span class="eyebrow-mark"></span> The ARAMS Standard</p>
+          <h2 id="trust-title">Why Fashion Connoisseurs Choose Us<span>.</span></h2>
         </div>
       </div>
       <div class="trust-grid">
         <article class="trust-card">
           <span class="trust-icon">COD</span>
-          <h3>Cash on delivery</h3>
-          <p>Pay when your order arrives. No guesswork, no stress, and easy confirmation before you keep it.</p>
+          <h3>Cash on Delivery Nationwide</h3>
+          <p>Pay when your order arrives at your doorstep across all 64 districts in Bangladesh. No prepayment, no anxiety.</p>
         </article>
         <article class="trust-card">
           <span class="trust-icon">WA</span>
-          <h3>Fast WhatsApp ordering</h3>
-          <p>Message the shop directly, confirm your order, and keep the buying process quick and personal.</p>
+          <h3>VIP WhatsApp Concierge</h3>
+          <p>Direct communication with our styling team for size guidance, custom requests, and instant order tracking.</p>
         </article>
         <article class="trust-card">
-          <span class="trust-icon">★</span>
-          <h3>Curated everyday style</h3>
-          <p>From watches to accessories, every piece is selected with practical, wearable style in mind.</p>
+          <span class="trust-icon">✦</span>
+          <h3>Curated Craftsmanship</h3>
+          <p>Tested UV400 optical protection, authentic stainless steel horology, and breathable natural textiles.</p>
+        </article>
+        <article class="trust-card">
+          <span class="trust-icon">⇄</span>
+          <h3>Hassle-Free Exchanges</h3>
+          <p>Not the perfect fit? We offer seamless 7-day exchanges to guarantee complete satisfaction.</p>
         </article>
       </div>
       <div class="trust-actions">
-        <a class="hero-cta" href="#shop">Shop the collection <span aria-hidden="true">→</span></a>
-        <a class="hero-secondary" href="https://wa.me/8801815653564" target="_blank" rel="noreferrer">Message on WhatsApp</a>
+        <a class="hero-cta" href="#shop">Shop The Collection <span aria-hidden="true">→</span></a>
+        <a class="hero-secondary" href="https://wa.me/8801815653564" target="_blank" rel="noreferrer">Message WhatsApp Stylist</a>
       </div>
     </section>
 
+    <!-- EDITORIAL WALL & REVIEWS -->
     <section class="editorial-wall" aria-labelledby="editorial-wall-title">
       <div class="editorial-wall__media">
-        <div class="editorial-wall__tag">ARAMS standard</div>
+        <div class="editorial-wall__tag">ARAMS Atelier Standard</div>
         <div class="editorial-wall__info">
-          <p class="eyebrow">The boutique edit</p>
-          <h2 id="editorial-wall-title">Distinct pieces for a sharper everyday look.</h2>
-          <p>We build each collection around texture, confidence, and versatility — so every item feels elevated without trying too hard.</p>
+          <p class="eyebrow"><span class="eyebrow-mark"></span> The Boutique Edit</p>
+          <h2 id="editorial-wall-title">Distinct pieces for a sharper everyday silhouette.</h2>
+          <p>We build each seasonal capsule around texture, presence, and versatile craftsmanship — so every piece looks elevated effortlessly.</p>
         </div>
       </div>
       <div class="testimonial-grid">
         <article class="testimonial-card">
           <span>★★★★★</span>
-          <p>"The quality feels premium and the ordering was so easy — I received exactly what I expected."</p>
-          <strong>— Rafi, Dhaka</strong>
+          <p>"The Casio A-159WA and Sola Frames exceeded my expectations. Pristine quality, authentic look, and rapid Cash on Delivery delivery in Dhanmondi."</p>
+          <strong>— Rafi K., Dhaka · Verified Collector</strong>
         </article>
         <article class="testimonial-card testimonial-card--accent">
           <span>★★★★★</span>
-          <p>"Very clean storefront, fast WhatsApp communication, and the collection feels refined."</p>
-          <strong>— Nabila, Chattogram</strong>
+          <p>"The knit polo texture is sensational. Responsive WhatsApp support made sizing effortless. Definitely my new go-to brand."</p>
+          <strong>— Nabila S., Chattogram · Verified Buyer</strong>
         </article>
       </div>
     </section>

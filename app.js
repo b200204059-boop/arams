@@ -522,6 +522,13 @@ bagsGrid.addEventListener("click", (event) => {
   handleProductCardNavigation(event);
 });
 
+document.addEventListener("click", (event) => {
+  const button = event.target.closest("[data-add], [data-buy]");
+  if (button && !button.closest(".product-grid")) {
+    handleProductAction(event);
+  }
+});
+
 document.querySelector("#bag-items").addEventListener("click", (event) => {
   const changeButton = event.target.closest("[data-change]");
   const removeButton = event.target.closest("[data-remove]");

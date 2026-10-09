@@ -1,13 +1,24 @@
+import os
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except ImportError:
+    pass
+import csv
+import io
 import json
 import os
 import re
 import secrets
 import sqlite3
+import psycopg2
+import psycopg2.extras
 from datetime import datetime, timezone
 from pathlib import Path
 from urllib.parse import urlencode
 
-from flask import Flask, abort, jsonify, redirect, request, send_from_directory, session
+from flask import Flask, Response, abort, jsonify, redirect, request, send_from_directory, session
+from werkzeug.security import check_password_hash, generate_password_hash
 
 
 BASE_DIR = Path(__file__).resolve().parent
@@ -150,13 +161,17 @@ PANTS_PRODUCTS = [
     ("Pleated Summer Shorts in Black", 800),
 ]
 PERFUME_PRODUCTS = [
-    ("perfume-001", "Rasasi Hawas Ice EDP for Men 100ml", 3100),
-    ("perfume-002", "Karus Gold Absolu by Khadlaj EDP 100ml", 3150),
-    ("perfume-003", "Al Rehab Choco Musk - Eau De Spray Perfume (50 ml)", 850),
-    ("perfume-004", "Rasasi Hawas Fire EDP 100ml", 3999),
-    ("perfume-005", "Lattafa Atlas Eau De Parfum 55ml", 3150),
-    ("perfume-007", "Rayhaan Aquatica EDP 100ml", 2650),
-    ("perfume-008", "Our Moment by One Direction For Women 50ml", 999),
+    ("perfume-001", "Arabiyat Oud al Layl Midnight Edition EDP 100ml", 1850),
+    ("perfume-002", "Tad Angel Attractive EDP Men 100ml", 1650),
+    ("perfume-003", "Vampire Blood Perfume Oil (Euro Valley)", 850),
+    ("perfume-004", "Brandy Perfumes Sunset EDP 100ml", 1450),
+    ("perfume-005", "Jean Lowe Azure by Maison Alhambra EDP 100ml", 3500),
+    ("perfume-006", "Swiss Arabian Shaghaf Oud Ahmar 75ml", 4200),
+    ("perfume-007", "Rasasi Hawas Ice EDP for Men 100ml", 3100),
+    ("perfume-008", "Maison Francis Kurkdjian Baccarat Rouge 540 EDP", 32500),
+    ("perfume-009", "Parfums de Marly Layton EDP for Men 125ml", 24500),
+    ("perfume-010", "Xerjoff Erba Pura EDP Unisex 100ml", 21000),
+    ("perfume-011", "Amouage Interlude Man EDP 100ml", 28000),
 ]
 
 
@@ -221,24 +236,34 @@ def perfume_details(product_id):
 
 app = Flask(__name__)
 app.config["MAX_CONTENT_LENGTH"] = 16 * 1024
-app.secret_key = os.environ.get("ARAMS_SECRET_KEY", "arams-admin-secret-key")
+app.secret_key = os.environ.get("ARAMS_SECRET_KEY") or secrets.token_hex(32)
 default_database = "/tmp/orders.sqlite3" if os.environ.get("VERCEL") else str(Path(app.instance_path) / "orders.sqlite3")
 app.config["DATABASE"] = os.environ.get(
     "ARAMS_DATABASE", default_database
 )
 WHATSAPP_NUMBER = re.sub(r"\D", "", os.environ.get("ARAMS_WHATSAPP", "8801815653564"))
 ADMIN_USERNAME = os.environ.get("ARAMS_ADMIN_USERNAME", "admin")
-ADMIN_PASSWORD = os.environ.get("ARAMS_ADMIN_PASSWORD", "admin123")
+ADMIN_PASSWORD = os.environ.get("ARAMS_ADMIN_PASSWORD")
+
+if not ADMIN_PASSWORD:
+    ADMIN_PASSWORD = secrets.token_urlsafe(16)
+    print(f"\n[SECURITY WARNING] No ARAMS_ADMIN_PASSWORD set. Generated random admin password: {ADMIN_PASSWORD}\n", flush=True)
+
+
+def verify_admin_password(provided_password):
+    if not isinstance(provided_password, str) or not provided_password:
+        return False
+    if ADMIN_PASSWORD.startswith(("scrypt:", "pbkdf2:", "argon2:")):
+        return check_password_hash(ADMIN_PASSWORD, provided_password)
+    return secrets.compare_digest(ADMIN_PASSWORD, provided_password)
 
 
 def require_admin_auth():
     if session.get("admin_logged_in"):
         return None
-    if not ADMIN_PASSWORD:
-        return None
 
     auth = request.authorization
-    if auth is None or auth.username != ADMIN_USERNAME or auth.password != ADMIN_PASSWORD:
+    if auth is None or auth.username != ADMIN_USERNAME or not verify_admin_password(auth.password):
         response = jsonify({"error": "Admin authentication required."})
         response.status_code = 401
         response.headers["WWW-Authenticate"] = 'Basic realm="Admin"'
@@ -251,6 +276,7 @@ def enforce_admin_access():
     admin_api_patterns = (
         request.path == "/api/orders" and request.method == "GET",
         request.path.startswith("/api/orders/") and request.method in {"PATCH", "DELETE"},
+        request.path.startswith("/api/admin/"),
     )
     is_admin_page = request.path.startswith("/admin") and request.path not in {"/admin/login", "/admin/logout"}
     if is_admin_page or any(admin_api_patterns):
@@ -259,10 +285,69 @@ def enforce_admin_access():
             return auth_error
 
 
+@app.errorhandler(400)
+def bad_request_error(e):
+    return jsonify({"error": "Bad request", "message": str(e)}), 400
+
+@app.errorhandler(404)
+def not_found_error(e):
+    return jsonify({"error": "Not found", "message": "The requested resource could not be found."}), 404
+
+@app.errorhandler(500)
+def internal_server_error(e):
+    return jsonify({"error": "Internal server error", "message": "An unexpected error occurred."}), 500
+
+
+
+class PostgresCursorWrapper:
+    def __init__(self, cursor):
+        self.cursor = cursor
+        
+    def fetchone(self):
+        return self.cursor.fetchone()
+        
+    def fetchall(self):
+        return self.cursor.fetchall()
+        
+    @property
+    def rowcount(self):
+        return self.cursor.rowcount
+
+class PostgresConnectionWrapper:
+    def __init__(self, dsn):
+        self.conn = psycopg2.connect(dsn)
+        self.conn.autocommit = False
+    
+    def execute(self, query, params=()):
+        query = query.replace("?", "%s")
+        cursor = self.conn.cursor()
+        cursor.execute(query, params)
+        return PostgresCursorWrapper(cursor)
+        
+    def executemany(self, query, params_list):
+        query = query.replace("?", "%s")
+        cursor = self.conn.cursor()
+        cursor.executemany(query, params_list)
+        return PostgresCursorWrapper(cursor)
+        
+    def commit(self):
+        self.conn.commit()
+        
+    def close(self):
+        self.conn.close()
+
+def get_db_connection(database_path=None):
+    dsn = os.environ.get("DATABASE_URL") or os.environ.get("POSTGRES_URL")
+    if dsn:
+        return PostgresConnectionWrapper(dsn)
+    if database_path:
+        return sqlite3.connect(database_path, timeout=30)
+    return sqlite3.connect(app.config["DATABASE"], timeout=30)
+
 def initialize_database():
     database_path = Path(app.config["DATABASE"])
     database_path.parent.mkdir(parents=True, exist_ok=True)
-    connection = sqlite3.connect(database_path, timeout=30)
+    connection = get_db_connection(database_path)
     try:
         connection.execute(
             """
@@ -294,13 +379,59 @@ def initialize_database():
             """
         )
         connection.execute(
-            "SELECT COUNT(*) FROM pragma_table_info('products') WHERE name = 'stock'"
+            """
+            CREATE TABLE IF NOT EXISTS coupons (
+                code TEXT PRIMARY KEY,
+                discount_type TEXT NOT NULL,
+                discount_value INTEGER NOT NULL,
+                min_spend INTEGER NOT NULL DEFAULT 0,
+                max_uses INTEGER NOT NULL DEFAULT 0,
+                used_count INTEGER NOT NULL DEFAULT 0,
+                expires_at TEXT NOT NULL DEFAULT '',
+                active INTEGER NOT NULL DEFAULT 1,
+                created_at TEXT NOT NULL DEFAULT ''
+            )
+            """
         )
-        stock_exists = connection.execute(
-            "SELECT COUNT(*) FROM pragma_table_info('products') WHERE name = 'stock'"
-        ).fetchone()[0]
-        if stock_exists == 0:
+
+        dsn = os.environ.get("DATABASE_URL") or os.environ.get("POSTGRES_URL")
+        if dsn:
+            order_cols = {row[0] for row in connection.execute("SELECT column_name FROM information_schema.columns WHERE table_name='orders'").fetchall()}
+        else:
+            order_cols = {row[1] for row in connection.execute("PRAGMA table_info('orders')").fetchall()}
+        if "courier_name" not in order_cols:
+            connection.execute("ALTER TABLE orders ADD COLUMN courier_name TEXT NOT NULL DEFAULT ''")
+        if "tracking_code" not in order_cols:
+            connection.execute("ALTER TABLE orders ADD COLUMN tracking_code TEXT NOT NULL DEFAULT ''")
+        if "discount" not in order_cols:
+            connection.execute("ALTER TABLE orders ADD COLUMN discount INTEGER NOT NULL DEFAULT 0")
+        if "coupon_code" not in order_cols:
+            connection.execute("ALTER TABLE orders ADD COLUMN coupon_code TEXT NOT NULL DEFAULT ''")
+
+        dsn = os.environ.get("DATABASE_URL") or os.environ.get("POSTGRES_URL")
+        if dsn:
+            product_cols = {row[0] for row in connection.execute("SELECT column_name FROM information_schema.columns WHERE table_name='products'").fetchall()}
+        else:
+            product_cols = {row[1] for row in connection.execute("PRAGMA table_info('products')").fetchall()}
+        if "stock" not in product_cols:
             connection.execute("ALTER TABLE products ADD COLUMN stock INTEGER NOT NULL DEFAULT 0")
+
+        coupon_count = connection.execute("SELECT COUNT(*) FROM coupons").fetchone()[0]
+        if coupon_count == 0:
+            now_iso = datetime.now(timezone.utc).isoformat()
+            default_coupons = [
+                ("ARAMS10", "percent", 10, 1500, 0, 0, "", 1, now_iso),
+                ("EID2026", "fixed", 500, 3000, 0, 0, "", 1, now_iso),
+                ("WELCOME", "fixed", 200, 1000, 0, 0, "", 1, now_iso),
+            ]
+            connection.executemany(
+                """
+                INSERT INTO coupons (code, discount_type, discount_value, min_spend, max_uses, used_count, expires_at, active, created_at)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                """,
+                default_coupons,
+            )
+
         connection.commit()
     finally:
         connection.close()
@@ -329,10 +460,10 @@ def add_custom_product(product_id, name, price, description="", color="", image=
         raise ValueError("Stock cannot be negative.")
     safe_description = clean_field(description or "", "Description", 500, required=False)
     safe_color = clean_field(color or "", "Color", 80, required=False)
-    safe_image = clean_field(image or "", "Image URL", 500, required=False)
+    safe_image = clean_field(image or "", "Image URL", 2000, required=False)
     created_at = datetime.now(timezone.utc).isoformat()
 
-    connection = sqlite3.connect(app.config["DATABASE"], timeout=30)
+    connection = get_db_connection()
     try:
         connection.execute(
             """
@@ -385,7 +516,7 @@ def update_custom_product(product_id, **updates):
     if "color" in updates:
         safe_updates["color"] = clean_field(updates.get("color", "") or "", "Color", 80, required=False)
     if "image" in updates:
-        safe_updates["image"] = clean_field(updates.get("image", "") or "", "Image URL", 500, required=False)
+        safe_updates["image"] = clean_field(updates.get("image", "") or "", "Image URL", 2000, required=False)
     if "stock" in updates:
         stock = updates.get("stock")
         if stock is None:
@@ -397,7 +528,7 @@ def update_custom_product(product_id, **updates):
                 raise ValueError("Stock cannot be negative.")
             safe_updates["stock"] = stock
 
-    connection = sqlite3.connect(app.config["DATABASE"], timeout=30)
+    connection = get_db_connection()
     try:
         existing = connection.execute(
             "SELECT 1 FROM products WHERE id = ? LIMIT 1",
@@ -405,6 +536,9 @@ def update_custom_product(product_id, **updates):
         ).fetchone()
         if existing is None:
             return None
+        if not safe_updates:
+            return get_catalog_product(normalized_id)
+            
         assignments = ", ".join(f"{key} = ?" for key in safe_updates)
         values = list(safe_updates.values()) + [normalized_id]
         connection.execute(
@@ -419,7 +553,7 @@ def update_custom_product(product_id, **updates):
 
 def delete_custom_product(product_id):
     normalized_id = sanitize_product_id(product_id)
-    connection = sqlite3.connect(app.config["DATABASE"], timeout=30)
+    connection = get_db_connection()
     try:
         cursor = connection.execute(
             "DELETE FROM products WHERE id = ?",
@@ -432,7 +566,7 @@ def delete_custom_product(product_id):
 
 
 def list_custom_products(limit=100):
-    connection = sqlite3.connect(app.config["DATABASE"])
+    connection = get_db_connection()
     try:
         rows = connection.execute(
             """
@@ -463,7 +597,7 @@ def get_catalog_product(product_id):
     if not isinstance(product_id, str):
         return None
     normalized_id = sanitize_product_id(product_id)
-    connection = sqlite3.connect(app.config["DATABASE"])
+    connection = get_db_connection()
     try:
         row = connection.execute(
             """
@@ -508,17 +642,20 @@ VALID_ORDER_STATUSES = {
 def _deserialize_order_row(row):
     if row is None:
         return None
-    (
-        reference,
-        customer_name,
-        customer_phone,
-        customer_email,
-        delivery_notes,
-        items_json,
-        total,
-        status,
-        created_at,
-    ) = row
+    reference = row[0]
+    customer_name = row[1]
+    customer_phone = row[2]
+    customer_email = row[3]
+    delivery_notes = row[4]
+    items_json = row[5]
+    total = row[6]
+    status = row[7]
+    created_at = row[8]
+    courier_name = row[9] if len(row) > 9 else ""
+    tracking_code = row[10] if len(row) > 10 else ""
+    discount = row[11] if len(row) > 11 else 0
+    coupon_code = row[12] if len(row) > 12 else ""
+
     return {
         "reference": reference,
         "customer_name": customer_name,
@@ -529,18 +666,23 @@ def _deserialize_order_row(row):
         "total": total,
         "status": status,
         "created_at": created_at,
+        "courier_name": courier_name,
+        "tracking_code": tracking_code,
+        "discount": discount,
+        "coupon_code": coupon_code,
     }
 
 
 def get_order_by_reference(reference):
     if not isinstance(reference, str) or not reference.strip():
         return None
-    connection = sqlite3.connect(app.config["DATABASE"])
+    connection = get_db_connection()
     try:
         row = connection.execute(
             """
             SELECT reference, customer_name, customer_phone, customer_email,
-                   delivery_notes, items_json, total, status, created_at
+                   delivery_notes, items_json, total, status, created_at,
+                   courier_name, tracking_code, discount, coupon_code
             FROM orders
             WHERE reference = ?
             LIMIT 1
@@ -553,12 +695,13 @@ def get_order_by_reference(reference):
 
 
 def list_orders(limit=50):
-    connection = sqlite3.connect(app.config["DATABASE"])
+    connection = get_db_connection()
     try:
         rows = connection.execute(
             """
             SELECT reference, customer_name, customer_phone, customer_email,
-                   delivery_notes, items_json, total, status, created_at
+                   delivery_notes, items_json, total, status, created_at,
+                   courier_name, tracking_code, discount, coupon_code
             FROM orders
             ORDER BY created_at DESC, rowid DESC
             LIMIT ?
@@ -571,7 +714,7 @@ def list_orders(limit=50):
     return [_deserialize_order_row(row) for row in rows]
 
 
-def update_order_status(reference, status):
+def update_order_status(reference, status, courier_name=None, tracking_code=None):
     if not isinstance(reference, str) or not reference.strip():
         raise ValueError("Order reference is required.")
     if not isinstance(status, str):
@@ -585,12 +728,24 @@ def update_order_status(reference, status):
     if existing_order is None:
         return False
 
-    connection = sqlite3.connect(app.config["DATABASE"], timeout=30)
+    connection = get_db_connection()
     try:
-        cursor = connection.execute(
-            "UPDATE orders SET status = ? WHERE reference = ?",
-            (normalized_status, reference.strip()),
-        )
+        if courier_name is not None or tracking_code is not None:
+            cursor = connection.execute(
+                """
+                UPDATE orders
+                SET status = ?,
+                    courier_name = COALESCE(?, courier_name),
+                    tracking_code = COALESCE(?, tracking_code)
+                WHERE reference = ?
+                """,
+                (normalized_status, courier_name, tracking_code, reference.strip()),
+            )
+        else:
+            cursor = connection.execute(
+                "UPDATE orders SET status = ? WHERE reference = ?",
+                (normalized_status, reference.strip()),
+            )
         connection.commit()
     finally:
         connection.close()
@@ -605,7 +760,7 @@ def reserve_stock_for_order(items):
     if not isinstance(items, list):
         return
 
-    connection = sqlite3.connect(app.config["DATABASE"], timeout=30)
+    connection = get_db_connection()
     try:
         for item in items:
             if not isinstance(item, dict):
@@ -647,7 +802,83 @@ def clean_field(value, field, maximum, required=True):
     return value
 
 
-def build_order(payload):
+def validate_coupon(code, subtotal):
+    if not isinstance(code, str) or not code.strip():
+        raise ValueError("Coupon code is required.")
+    if not isinstance(subtotal, int) or subtotal <= 0:
+        raise ValueError("Subtotal must be greater than zero.")
+
+    normalized_code = code.strip().upper()
+    connection = get_db_connection()
+    try:
+        row = connection.execute(
+            """
+            SELECT code, discount_type, discount_value, min_spend, max_uses, used_count, expires_at, active
+            FROM coupons
+            WHERE code = ?
+            LIMIT 1
+            """,
+            (normalized_code,),
+        ).fetchone()
+    finally:
+        connection.close()
+
+    if row is None:
+        raise ValueError(f"Coupon '{normalized_code}' does not exist.")
+
+    code, discount_type, discount_value, min_spend, max_uses, used_count, expires_at, active = row
+    if not active:
+        raise ValueError(f"Coupon '{normalized_code}' is currently inactive.")
+
+    if expires_at:
+        try:
+            exp_date = datetime.fromisoformat(expires_at)
+            if datetime.now(timezone.utc) > exp_date:
+                raise ValueError(f"Coupon '{normalized_code}' has expired.")
+        except (ValueError, TypeError):
+            pass
+
+    if max_uses > 0 and used_count >= max_uses:
+        raise ValueError(f"Coupon '{normalized_code}' has reached its maximum usage limit.")
+
+    if subtotal < min_spend:
+        raise ValueError(f"Coupon '{normalized_code}' requires a minimum spend of ৳{min_spend:,}.")
+
+    if discount_type == "percent":
+        discount = int(subtotal * discount_value / 100)
+    elif discount_type == "fixed":
+        discount = min(discount_value, subtotal)
+    else:
+        raise ValueError("Invalid coupon configuration.")
+
+    final_total = max(0, subtotal - discount)
+    return {
+        "valid": True,
+        "code": normalized_code,
+        "discount_type": discount_type,
+        "discount_value": discount_value,
+        "discount": discount,
+        "final_total": final_total,
+        "message": f"Coupon applied: ৳{discount:,} off!",
+    }
+
+
+def record_coupon_usage(code):
+    if not code:
+        return
+    normalized_code = code.strip().upper()
+    connection = get_db_connection()
+    try:
+        connection.execute(
+            "UPDATE coupons SET used_count = used_count + 1 WHERE code = ?",
+            (normalized_code,),
+        )
+        connection.commit()
+    finally:
+        connection.close()
+
+
+def build_order(payload, coupon_code=None):
     if not isinstance(payload, dict) or not isinstance(payload.get("customer"), dict):
         raise ValueError("Order details are missing.")
 
@@ -681,6 +912,10 @@ def build_order(payload):
             product_details = pants_details(product_id)
         if product_details is None and isinstance(product_id, str):
             product_details = perfume_details(product_id)
+        if product_details is None and isinstance(product_id, str):
+            custom_product = get_catalog_product(product_id)
+            if custom_product is not None:
+                product_details = (custom_product["name"], custom_product["price"])
         if product_details is None:
             raise ValueError("A selected product is unavailable.")
         if type(quantity) is not int or quantity < 1 or quantity > 99:
@@ -694,14 +929,27 @@ def build_order(payload):
             "line_total": unit_price * quantity,
         })
 
-    return customer, items, sum(item["line_total"] for item in items)
+    subtotal = sum(item["line_total"] for item in items)
+    discount = 0
+    coupon = coupon_code or payload.get("coupon_code") or (payload.get("customer") or {}).get("coupon_code")
+    if coupon and isinstance(coupon, str) and coupon.strip():
+        coupon_res = validate_coupon(coupon, subtotal)
+        discount = coupon_res["discount"]
+
+    final_total = max(0, subtotal - discount)
+    return customer, items, final_total
 
 
-def make_whatsapp_url(reference, customer, items, total):
+def make_whatsapp_url(reference, customer, items, total, discount=0, coupon_code=""):
     message_lines = [f"ARAMS order {reference}", ""]
     message_lines.extend(
         f"{item['name']} x {item['quantity']} — ৳{item['line_total']:,}" for item in items
     )
+    if discount > 0 and coupon_code:
+        subtotal = total + discount
+        message_lines.append("")
+        message_lines.append(f"Subtotal: ৳{subtotal:,}")
+        message_lines.append(f"Coupon ({coupon_code}): -৳{discount:,}")
     message_lines.extend([
         "",
         f"Total: ৳{total:,}",
@@ -727,7 +975,38 @@ def health_check():
 def list_products_endpoint():
     query = (request.args.get("search") or "").strip().lower()
     category = (request.args.get("category") or "").strip().lower()
+    
+    # Start with custom products from the database
     products = list_custom_products(limit=200)
+    
+    # Merge hardcoded PERFUME_PRODUCTS
+    for p_id, p_name, p_price in PERFUME_PRODUCTS:
+        products.append({"id": p_id, "name": p_name, "price": p_price, "description": "Premium Fragrance", "color": "Full bottle", "image": "", "stock": 999})
+        
+    # Merge PANTS_PRODUCTS
+    for i, (p_name, p_price) in enumerate(PANTS_PRODUCTS):
+        products.append({"id": f"gorur-pants-{i+1:03d}", "name": p_name, "price": p_price, "description": "Apparel", "color": "Standard", "image": "", "stock": 999})
+        
+    # Merge KATUA_PRODUCTS
+    for i, (p_name, p_price) in enumerate(KATUA_PRODUCTS):
+        products.append({"id": f"katua-{i+1:03d}", "name": p_name, "price": p_price, "description": "Katua Apparel", "color": "Standard", "image": "", "stock": 999})
+        
+    # Merge MARKET_SUNGLASSES
+    for i, (p_name, p_price) in enumerate(MARKET_SUNGLASSES):
+        products.append({"id": f"market-sunglasses-{i+1:03d}", "name": p_name, "price": p_price, "description": "Sunglasses", "color": "Standard", "image": "", "stock": 999})
+        
+    # Merge PRONOUN_WATCHES
+    for i, (p_name, p_price) in enumerate(PRONOUN_WATCHES):
+        products.append({"id": f"pronoun-watch-{i+1:03d}", "name": p_name, "price": p_price, "description": "Watches", "color": "Standard", "image": "", "stock": 999})
+        
+    # Merge PREMIUM_BAG_NAMES
+    for i, p_name in enumerate(PREMIUM_BAG_NAMES):
+        bag_name, bag_price = premium_bag_details(f"premium-bag-{i+1:03d}")
+        products.append({"id": f"premium-bag-{i+1:03d}", "name": bag_name, "price": bag_price, "description": "Premium Bag", "color": "Standard", "image": "", "stock": 999})
+        
+    # Merge base PRODUCTS
+    for p_id, (p_name, p_price) in PRODUCTS.items():
+        products.append({"id": p_id, "name": p_name, "price": p_price, "description": "In stock", "color": "Standard", "image": "", "stock": 999})
 
     if query:
         products = [
@@ -841,8 +1120,10 @@ def update_order_status_endpoint(reference):
 
     payload = request.get_json(silent=True) or {}
     status = payload.get("status")
+    courier_name = payload.get("courier_name")
+    tracking_code = payload.get("tracking_code")
     try:
-        updated = update_order_status(reference, status)
+        updated = update_order_status(reference, status, courier_name=courier_name, tracking_code=tracking_code)
     except ValueError as error:
         return jsonify({"error": str(error)}), 400
 
@@ -850,7 +1131,13 @@ def update_order_status_endpoint(reference):
         return jsonify({"error": "Order not found."}), 404
 
     normalized_status = status.strip().lower() if isinstance(status, str) else status
-    return jsonify({"reference": reference, "status": normalized_status, "updated": True})
+    return jsonify({
+        "reference": reference,
+        "status": normalized_status,
+        "courier_name": courier_name,
+        "tracking_code": tracking_code,
+        "updated": True,
+    })
 
 
 @app.delete("/api/orders/<reference>")
@@ -863,6 +1150,460 @@ def delete_order_endpoint(reference):
     if not updated:
         return jsonify({"error": "Order not found."}), 404
     return jsonify({"reference": reference, "status": "cancelled", "deleted": True})
+
+
+STATUS_MESSAGES = {
+    "awaiting_whatsapp": {
+        "badge": "Awaiting WhatsApp",
+        "description": "Order registered in system. Awaiting customer confirmation via WhatsApp.",
+        "step": 1,
+    },
+    "awaiting_payment": {
+        "badge": "Payment Pending",
+        "description": "Order confirmed. Awaiting payment or COD validation.",
+        "step": 2,
+    },
+    "paid": {
+        "badge": "Confirmed & Paid",
+        "description": "Payment received or COD approved. Preparing for dispatch.",
+        "step": 3,
+    },
+    "packed": {
+        "badge": "Packed & Ready",
+        "description": "Your items are carefully packed and ready for courier pickup.",
+        "step": 3,
+    },
+    "shipped": {
+        "badge": "Shipped / In Transit",
+        "description": "Parcel handed over to courier for delivery. Expect arrival in 24-48 hours.",
+        "step": 4,
+    },
+    "completed": {
+        "badge": "Delivered",
+        "description": "Order delivered successfully. Thank you for shopping with ARAMS!",
+        "step": 5,
+    },
+    "cancelled": {
+        "badge": "Cancelled",
+        "description": "This order has been cancelled.",
+        "step": 0,
+    },
+}
+
+
+def mask_string(val, is_email=False):
+    if not val:
+        return ""
+    if is_email and "@" in val:
+        user, domain = val.split("@", 1)
+        masked_user = user[0] + "***" if len(user) > 1 else user + "***"
+        return f"{masked_user}@{domain}"
+    if len(val) >= 7:
+        return val[:3] + "****" + val[-3:]
+    return val[:2] + "****"
+
+
+@app.get("/api/orders/track")
+def track_order_endpoint():
+    reference = (request.args.get("reference") or "").strip()
+    phone = (request.args.get("phone") or "").strip()
+
+    if not reference and not phone:
+        return jsonify({"error": "Please provide an order reference or phone number."}), 400
+
+    connection = get_db_connection()
+    try:
+        if reference:
+            row = connection.execute(
+                """
+                SELECT reference, customer_name, customer_phone, customer_email,
+                       delivery_notes, items_json, total, status, created_at,
+                       courier_name, tracking_code, discount, coupon_code
+                FROM orders
+                WHERE reference = ?
+                LIMIT 1
+                """,
+                (reference,),
+            ).fetchone()
+
+            if row is None:
+                return jsonify({"found": False, "error": f"No order found with reference '{reference}'."}), 404
+
+            order = _deserialize_order_row(row)
+            status_info = STATUS_MESSAGES.get(order["status"], {
+                "badge": order["status"].replace("_", " ").title(),
+                "description": "Order is being processed.",
+                "step": 1,
+            })
+
+            return jsonify({
+                "found": True,
+                "order": {
+                    "reference": order["reference"],
+                    "customer_name": order["customer_name"],
+                    "customer_phone_masked": mask_string(order["customer_phone"]),
+                    "customer_email_masked": mask_string(order["customer_email"], is_email=True),
+                    "items": order["items"],
+                    "total": order["total"],
+                    "discount": order["discount"],
+                    "status": order["status"],
+                    "status_badge": status_info["badge"],
+                    "status_description": status_info["description"],
+                    "step": status_info["step"],
+                    "courier_name": order["courier_name"],
+                    "tracking_code": order["tracking_code"],
+                    "created_at": order["created_at"],
+                },
+            })
+
+        cleaned_phone = re.sub(r"\D", "", phone)
+        if len(cleaned_phone) >= 10 and cleaned_phone.startswith("88"):
+            cleaned_phone = cleaned_phone[2:]
+
+        rows = connection.execute(
+            """
+            SELECT reference, customer_name, customer_phone, customer_email,
+                   delivery_notes, items_json, total, status, created_at,
+                   courier_name, tracking_code, discount, coupon_code
+            FROM orders
+            WHERE customer_phone LIKE ? OR customer_phone LIKE ?
+            ORDER BY created_at DESC
+            LIMIT 10
+            """,
+            (f"%{cleaned_phone}%", f"%{phone}%"),
+        ).fetchall()
+
+        if not rows:
+            return jsonify({"found": False, "error": f"No orders found for phone number '{phone}'."}), 404
+
+        orders = []
+        for r in rows:
+            ord_dict = _deserialize_order_row(r)
+            s_info = STATUS_MESSAGES.get(ord_dict["status"], {"badge": ord_dict["status"].title(), "description": "", "step": 1})
+            orders.append({
+                "reference": ord_dict["reference"],
+                "total": ord_dict["total"],
+                "status": ord_dict["status"],
+                "status_badge": s_info["badge"],
+                "created_at": ord_dict["created_at"],
+                "items_count": len(ord_dict["items"]),
+                "courier_name": ord_dict["courier_name"],
+                "tracking_code": ord_dict["tracking_code"],
+            })
+
+        return jsonify({"found": True, "count": len(orders), "orders": orders})
+
+    finally:
+        connection.close()
+
+
+@app.get("/api/admin/analytics")
+def admin_analytics_endpoint():
+    auth_error = require_admin_auth()
+    if auth_error is not None:
+        return auth_error
+
+    connection = get_db_connection()
+    try:
+        orders_row = connection.execute(
+            """
+            SELECT 
+                COUNT(*) as total_orders,
+                COALESCE(SUM(CASE WHEN status != 'cancelled' THEN total ELSE 0 END), 0) as total_revenue,
+                COALESCE(SUM(CASE WHEN status != 'cancelled' THEN discount ELSE 0 END), 0) as total_discounts
+            FROM orders
+            """
+        ).fetchone()
+        total_orders, total_revenue, total_discounts = orders_row
+
+        status_rows = connection.execute(
+            "SELECT status, COUNT(*) FROM orders GROUP BY status"
+        ).fetchall()
+        status_breakdown = {status: count for status, count in status_rows}
+
+        valid_orders_count = total_orders - status_breakdown.get("cancelled", 0)
+        avg_order_value = int(total_revenue / valid_orders_count) if valid_orders_count > 0 else 0
+
+        all_items_rows = connection.execute(
+            "SELECT items_json FROM orders WHERE status != 'cancelled'"
+        ).fetchall()
+        item_counter = {}
+        for (item_json,) in all_items_rows:
+            try:
+                for it in json.loads(item_json or "[]"):
+                    it_id = it.get("id", "unknown")
+                    it_name = it.get("name", it_id)
+                    it_qty = it.get("quantity", 1)
+                    it_total = it.get("line_total", 0)
+                    if it_id not in item_counter:
+                        item_counter[it_id] = {"id": it_id, "name": it_name, "quantity": 0, "revenue": 0}
+                    item_counter[it_id]["quantity"] += it_qty
+                    item_counter[it_id]["revenue"] += it_total
+            except Exception:
+                pass
+
+        top_products = sorted(item_counter.values(), key=lambda x: x["quantity"], reverse=True)[:5]
+
+        low_stock_rows = connection.execute(
+            "SELECT id, name, price, stock FROM products WHERE stock <= 5 ORDER BY stock ASC LIMIT 10"
+        ).fetchall()
+        low_stock = [
+            {"id": p_id, "name": name, "price": price, "stock": stock}
+            for p_id, name, price, stock in low_stock_rows
+        ]
+
+        coupon_rows = connection.execute(
+            "SELECT code, discount_type, discount_value, used_count, active FROM coupons ORDER BY used_count DESC"
+        ).fetchall()
+        coupons_list = [
+            {"code": c, "type": t, "value": v, "used_count": u, "active": bool(a)}
+            for c, t, v, u, a in coupon_rows
+        ]
+
+        return jsonify({
+            "metrics": {
+                "total_orders": total_orders,
+                "valid_orders": valid_orders_count,
+                "total_revenue": total_revenue,
+                "total_discounts_granted": total_discounts,
+                "average_order_value": avg_order_value,
+            },
+            "status_breakdown": status_breakdown,
+            "top_products": top_products,
+            "low_stock_products": low_stock,
+            "coupons": coupons_list,
+        })
+    finally:
+        connection.close()
+
+
+@app.get("/api/admin/orders/export")
+def admin_export_orders_endpoint():
+    auth_error = require_admin_auth()
+    if auth_error is not None:
+        return auth_error
+
+    status_filter = request.args.get("status")
+    export_format = request.args.get("format", "steadfast").lower()
+
+    connection = get_db_connection()
+    try:
+        if status_filter and status_filter != "all":
+            rows = connection.execute(
+                """
+                SELECT reference, customer_name, customer_phone, delivery_notes,
+                       items_json, total, status, created_at, courier_name, tracking_code
+                FROM orders
+                WHERE status = ?
+                ORDER BY created_at DESC
+                """,
+                (status_filter,),
+            ).fetchall()
+        else:
+            rows = connection.execute(
+                """
+                SELECT reference, customer_name, customer_phone, delivery_notes,
+                       items_json, total, status, created_at, courier_name, tracking_code
+                FROM orders
+                WHERE status != 'cancelled'
+                ORDER BY created_at DESC
+                """
+            ).fetchall()
+    finally:
+        connection.close()
+
+    output = io.StringIO()
+    writer = csv.writer(output)
+
+    if export_format == "steadfast":
+        writer.writerow(["Invoice", "Recipient Name", "Recipient Phone", "Recipient Address", "COD Amount", "Note"])
+        for ref, name, phone, address, items_json, total, status, created_at, courier, tracking in rows:
+            try:
+                items_summary = ", ".join(f"{it.get('name')} x{it.get('quantity')}" for it in json.loads(items_json or "[]"))
+            except Exception:
+                items_summary = ""
+            writer.writerow([ref, name, phone, address, total, items_summary])
+    else:
+        writer.writerow(["Reference", "Customer Name", "Customer Phone", "Delivery Notes", "Items", "Total (BDT)", "Status", "Created At", "Courier", "Tracking Code"])
+        for ref, name, phone, address, items_json, total, status, created_at, courier, tracking in rows:
+            try:
+                items_summary = ", ".join(f"{it.get('name')} x{it.get('quantity')}" for it in json.loads(items_json or "[]"))
+            except Exception:
+                items_summary = ""
+            writer.writerow([ref, name, phone, address, items_summary, total, status, created_at, courier, tracking])
+
+    csv_data = output.getvalue()
+    filename = f"arams_orders_{datetime.now(timezone.utc).strftime('%Y%m%d_%H%M%S')}.csv"
+    return Response(
+        csv_data,
+        mimetype="text/csv",
+        headers={"Content-Disposition": f"attachment; filename={filename}"},
+    )
+
+
+@app.post("/api/coupons/validate")
+def validate_coupon_endpoint():
+    payload = request.get_json(silent=True) or request.form.to_dict() or {}
+    code = payload.get("code")
+    subtotal = payload.get("subtotal")
+    try:
+        subtotal_int = int(subtotal)
+    except (TypeError, ValueError):
+        return jsonify({"valid": False, "error": "Subtotal must be a valid number."}), 400
+
+    try:
+        result = validate_coupon(code, subtotal_int)
+        return jsonify(result)
+    except ValueError as error:
+        return jsonify({"valid": False, "error": str(error)}), 400
+
+
+@app.get("/api/admin/coupons")
+def list_coupons_endpoint():
+    auth_error = require_admin_auth()
+    if auth_error is not None:
+        return auth_error
+
+    connection = get_db_connection()
+    try:
+        rows = connection.execute(
+            """
+            SELECT code, discount_type, discount_value, min_spend, max_uses, used_count, expires_at, active, created_at
+            FROM coupons
+            ORDER BY created_at DESC
+            """
+        ).fetchall()
+        coupons = [
+            {
+                "code": r[0],
+                "discount_type": r[1],
+                "discount_value": r[2],
+                "min_spend": r[3],
+                "max_uses": r[4],
+                "used_count": r[5],
+                "expires_at": r[6],
+                "active": bool(r[7]),
+                "created_at": r[8],
+            }
+            for r in rows
+        ]
+        return jsonify({"coupons": coupons})
+    finally:
+        connection.close()
+
+
+@app.post("/api/admin/coupons")
+def create_coupon_endpoint():
+    auth_error = require_admin_auth()
+    if auth_error is not None:
+        return auth_error
+
+    payload = request.get_json(silent=True) or request.form.to_dict() or {}
+    code = (payload.get("code") or "").strip().upper()
+    discount_type = (payload.get("discount_type") or "percent").strip().lower()
+    try:
+        discount_value = int(payload.get("discount_value", 0))
+        min_spend = int(payload.get("min_spend", 0))
+        max_uses = int(payload.get("max_uses", 0))
+    except (TypeError, ValueError):
+        return jsonify({"error": "Discount value, min spend, and max uses must be integers."}), 400
+
+    if not code:
+        return jsonify({"error": "Coupon code is required."}), 400
+    if discount_type not in {"percent", "fixed"}:
+        return jsonify({"error": "Discount type must be 'percent' or 'fixed'."}), 400
+    if discount_value <= 0:
+        return jsonify({"error": "Discount value must be greater than zero."}), 400
+    if discount_type == "percent" and discount_value > 100:
+        return jsonify({"error": "Percentage discount cannot exceed 100%."}), 400
+
+    expires_at = (payload.get("expires_at") or "").strip()
+    active = 1 if payload.get("active", True) in {True, "true", "1", 1} else 0
+    now_iso = datetime.now(timezone.utc).isoformat()
+
+    connection = get_db_connection()
+    try:
+        connection.execute(
+            """
+            INSERT INTO coupons (code, discount_type, discount_value, min_spend, max_uses, used_count, expires_at, active, created_at)
+            VALUES (?, ?, ?, ?, ?, 0, ?, ?, ?)
+            ON CONFLICT(code) DO UPDATE SET
+                discount_type = excluded.discount_type,
+                discount_value = excluded.discount_value,
+                min_spend = excluded.min_spend,
+                max_uses = excluded.max_uses,
+                expires_at = excluded.expires_at,
+                active = excluded.active
+            """,
+            (code, discount_type, discount_value, min_spend, max_uses, expires_at, active, now_iso),
+        )
+        connection.commit()
+        return jsonify({"success": True, "code": code, "message": f"Coupon {code} saved."}), 201
+    finally:
+        connection.close()
+
+
+@app.delete("/api/admin/coupons/<code>")
+def delete_coupon_endpoint(code):
+    auth_error = require_admin_auth()
+    if auth_error is not None:
+        return auth_error
+
+    clean_code = code.strip().upper()
+    connection = get_db_connection()
+    try:
+        cursor = connection.execute("DELETE FROM coupons WHERE code = ?", (clean_code,))
+        connection.commit()
+        if cursor.rowcount == 0:
+            return jsonify({"error": "Coupon not found."}), 404
+        return jsonify({"success": True, "deleted": True, "code": clean_code})
+    finally:
+        connection.close()
+
+
+@app.get("/api/catalog")
+def get_unified_catalog_endpoint():
+    category = (request.args.get("category") or "").strip().lower()
+    search = (request.args.get("search") or "").strip().lower()
+    sort = (request.args.get("sort") or "featured").strip().lower()
+
+    catalog = []
+    for pid, (name, price) in PRODUCTS.items():
+        catalog.append({
+            "id": pid,
+            "name": name,
+            "price": price,
+            "category": "Accessories",
+            "source": "static",
+            "in_stock": True,
+        })
+
+    custom_products = list_custom_products(limit=500)
+    for cp in custom_products:
+        catalog.append({
+            "id": cp["id"],
+            "name": cp["name"],
+            "price": cp["price"],
+            "description": cp.get("description", ""),
+            "color": cp.get("color", ""),
+            "image": cp.get("image", ""),
+            "category": "Custom",
+            "stock": cp.get("stock", 0),
+            "source": "database",
+            "in_stock": cp.get("stock", 0) > 0,
+        })
+
+    if search:
+        catalog = [item for item in catalog if search in item["name"].lower() or search in item.get("description", "").lower()]
+    if category and category != "all":
+        catalog = [item for item in catalog if category in item.get("category", "").lower() or category in item["name"].lower()]
+
+    if sort == "low-high":
+        catalog.sort(key=lambda x: x["price"])
+    elif sort == "high-low":
+        catalog.sort(key=lambda x: x["price"], reverse=True)
+
+    return jsonify({"count": len(catalog), "products": catalog})
 
 
 @app.errorhandler(404)
@@ -882,12 +1623,36 @@ def buy_page():
     return send_from_directory(BASE_DIR, "buy.html")
 
 
-@app.get("/admin")
 @app.get("/admin/orders")
+@app.get("/admin")
+@app.get("/admin/dashboard")
+def admin_dashboard_page():
+    if not session.get("admin_logged_in"):
+        return send_from_directory(BASE_DIR, "admin_login.html")
+    return send_from_directory(BASE_DIR, "admin_dashboard.html")
+
 def admin_orders_page():
     if not session.get("admin_logged_in"):
         return send_from_directory(BASE_DIR, "admin_login.html")
     return send_from_directory(BASE_DIR, "admin_orders.html")
+
+@app.get("/admin/products")
+def admin_products_page():
+    if not session.get("admin_logged_in"):
+        return send_from_directory(BASE_DIR, "admin_login.html")
+    return send_from_directory(BASE_DIR, "admin_products.html")
+
+@app.get("/admin/coupons")
+def admin_coupons_page():
+    if not session.get("admin_logged_in"):
+        return send_from_directory(BASE_DIR, "admin_login.html")
+    return send_from_directory(BASE_DIR, "admin_coupons.html")
+
+@app.get("/admin/settings")
+def admin_settings_page():
+    if not session.get("admin_logged_in"):
+        return send_from_directory(BASE_DIR, "admin_login.html")
+    return send_from_directory(BASE_DIR, "admin_settings.html")
 
 
 @app.get("/admin/login")
@@ -902,7 +1667,7 @@ def admin_login_submit():
     payload = request.form.to_dict()
     username = payload.get("username", "")
     password = payload.get("password", "")
-    if username == ADMIN_USERNAME and password == ADMIN_PASSWORD:
+    if username == ADMIN_USERNAME and verify_admin_password(password):
         session["admin_logged_in"] = True
         return redirect("/admin")
     return send_from_directory(BASE_DIR, "admin_login.html")
@@ -935,23 +1700,32 @@ def frontend_asset(filename):
 
 @app.post("/api/orders")
 def create_order():
-    payload = request.get_json(silent=True)
+    payload = request.get_json(silent=True) or {}
+    coupon_code = payload.get("coupon_code") or (payload.get("customer") or {}).get("coupon_code") or ""
     try:
-        customer, items, total = build_order(payload)
+        customer, items, total = build_order(payload, coupon_code=coupon_code)
     except ValueError as error:
         return jsonify({"error": str(error)}), 400
+
+    subtotal = sum(item["line_total"] for item in items)
+    discount = max(0, subtotal - total)
+    clean_coupon = coupon_code.strip().upper() if (discount > 0 and isinstance(coupon_code, str)) else ""
 
     reference = f"AR-{secrets.token_hex(4).upper()}"
     created_at = datetime.now(timezone.utc).isoformat()
     reserve_stock_for_order(items)
-    connection = sqlite3.connect(app.config["DATABASE"])
+    if clean_coupon:
+        record_coupon_usage(clean_coupon)
+
+    connection = get_db_connection()
     try:
         connection.execute(
             """
             INSERT INTO orders (
                 reference, customer_name, customer_phone, customer_email,
-                delivery_notes, items_json, total, status, created_at
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                delivery_notes, items_json, total, status, created_at,
+                discount, coupon_code
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """,
             (
                 reference,
@@ -963,6 +1737,8 @@ def create_order():
                 total,
                 "awaiting_whatsapp",
                 created_at,
+                discount,
+                clean_coupon,
             ),
         )
         connection.commit()
@@ -972,7 +1748,10 @@ def create_order():
     return jsonify({
         "reference": reference,
         "total": total,
-        "whatsapp_url": make_whatsapp_url(reference, customer, items, total),
+        "subtotal": subtotal,
+        "discount": discount,
+        "coupon_code": clean_coupon,
+        "whatsapp_url": make_whatsapp_url(reference, customer, items, total, discount=discount, coupon_code=clean_coupon),
     }), 201
 
 

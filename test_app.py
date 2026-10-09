@@ -246,6 +246,76 @@ class BuildOrderTests(unittest.TestCase):
         self.assertEqual(response.status_code, 302)
         self.assertEqual(response.headers.get("Location"), "/admin")
 
+    def test_track_order_endpoint_by_reference_and_phone(self):
+        client = app.app.test_client()
+        # Track by reference
+        response = client.get("/api/orders/track?reference=AR-TEST-ORDER")
+        self.assertEqual(response.status_code, 200)
+        data = response.get_json()
+        self.assertTrue(data["found"])
+        self.assertEqual(data["order"]["reference"], "AR-TEST-ORDER")
+        self.assertIn("****", data["order"]["customer_phone_masked"])
+
+        # Track by phone
+        response_phone = client.get("/api/orders/track?phone=01700000000")
+        self.assertEqual(response_phone.status_code, 200)
+        data_phone = response_phone.get_json()
+        self.assertTrue(data_phone["found"])
+        self.assertTrue(any(o["reference"] == "AR-TEST-ORDER" for o in data_phone["orders"]))
+
+    def test_coupon_validation_and_order_discount(self):
+        client = app.app.test_client()
+        # Validate 10% coupon
+        res = client.post("/api/coupons/validate", json={"code": "ARAMS10", "subtotal": 2000})
+        self.assertEqual(res.status_code, 200)
+        data = res.get_json()
+        self.assertTrue(data["valid"])
+        self.assertEqual(data["discount"], 200)
+        self.assertEqual(data["final_total"], 1800)
+
+        # Inactive or invalid coupon
+        res_invalid = client.post("/api/coupons/validate", json={"code": "NONEXISTENT", "subtotal": 2000})
+        self.assertEqual(res_invalid.status_code, 400)
+
+        # Minimum spend requirement
+        res_min = client.post("/api/coupons/validate", json={"code": "ARAMS10", "subtotal": 500})
+        self.assertEqual(res_min.status_code, 400)
+
+    def test_admin_analytics_endpoint(self):
+        client = app.app.test_client()
+        with client.session_transaction() as sess:
+            sess["admin_logged_in"] = True
+
+        res = client.get("/api/admin/analytics")
+        self.assertEqual(res.status_code, 200)
+        data = res.get_json()
+        self.assertIn("metrics", data)
+        self.assertIn("total_revenue", data["metrics"])
+        self.assertIn("status_breakdown", data)
+        self.assertIn("top_products", data)
+
+    def test_admin_export_orders_csv(self):
+        client = app.app.test_client()
+        with client.session_transaction() as sess:
+            sess["admin_logged_in"] = True
+
+        res = client.get("/api/admin/orders/export?format=steadfast")
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(res.mimetype, "text/csv")
+        self.assertIn("Invoice,Recipient Name,Recipient Phone", res.text)
+
+    def test_unified_catalog_endpoint(self):
+        client = app.app.test_client()
+        res = client.get("/api/catalog?search=sola")
+        self.assertEqual(res.status_code, 200)
+        data = res.get_json()
+        self.assertTrue(any("Sola Frames" in p["name"] for p in data["products"]))
+
+    def test_verify_admin_password_supports_plain_and_hash(self):
+        self.assertTrue(app.verify_admin_password("admin123"))
+        self.assertFalse(app.verify_admin_password("wrong-password"))
+
 
 if __name__ == "__main__":
     unittest.main()
+
