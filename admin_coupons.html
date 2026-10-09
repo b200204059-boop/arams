@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ARAMS — Promotions</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,400&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: { extend: { fontFamily: { sans: ['"DM Sans"', 'sans-serif'], serif: ['"Cormorant Garamond"', 'serif'] }, colors: { brand: { black: '#12100E', accent: '#C5A880', border: '#E5E5E5' } } } }
+    }
+  </script>
+  <style>
+    body { background-color: #FAFAFA; color: #12100E; }
+    .glass-card { background: white; border: 1px solid #E5E5E5; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.02); }
+    .sidebar-link { transition: all 0.2s; }
+    .sidebar-link:hover { background: #1A1816; color: white; }
+    .sidebar-link.active { background: #1A1816; color: white; border-left: 3px solid #C5A880; }
+    
+    /* Utility classes for JS injection to use */
+    .coupon-list li { display: flex; justify-content: space-between; align-items: center; padding: 16px; border-bottom: 1px solid #F3F4F6; transition: background 0.2s; }
+    .coupon-list li:hover { background: #F9FAFB; }
+    .coupon-meta strong { font-family: "Cormorant Garamond", serif; font-size: 1.125rem; font-weight: 600; color: #12100E; display: block; }
+    .coupon-meta small { color: #6B7280; font-size: 0.75rem; }
+    
+    /* Toast styles used by existing JS */
+    .toast { opacity: 0; transition: opacity 0.3s; position: fixed; bottom: 20px; right: 20px; padding: 12px 24px; border-radius: 8px; color: white; font-weight: bold; z-index: 50; pointer-events: none; }
+    .toast.show { opacity: 1; pointer-events: auto; }
+  </style>
+</head>
+<body class="flex h-screen overflow-hidden antialiased">
+  <aside class="w-64 bg-brand-black text-gray-300 flex flex-col justify-between hidden md:flex border-r border-[#2A2826]">
+    <div>
+      <div class="h-20 flex items-center px-8 border-b border-[#2A2826]">
+        <h1 class="font-serif text-2xl text-white tracking-widest uppercase">ARAMS<span class="text-brand-accent">.</span></h1>
+      </div>
+      <nav class="mt-8 flex flex-col gap-2 px-4 text-sm font-medium tracking-wide">
+        <p class="px-4 text-xs font-semibold text-gray-500 uppercase tracking-widest mb-2">Management</p>
+        <a href="/admin/dashboard" class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-lg text-gray-300">Dashboard</a>
+        <a href="/admin/orders" class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-lg text-gray-300">Orders</a>
+        <a href="/admin/products" class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-lg text-gray-300">Catalog</a>
+        <a href="/admin/coupons" class="sidebar-link active flex items-center gap-3 px-4 py-3 rounded-lg text-white">Promotions</a>
+      </nav>
+    </div>
+    <div class="p-4 mb-4">
+      <a href="/admin/settings" class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium mb-2">Settings</a>
+      <a href="/admin/logout" class="flex items-center justify-center gap-2 w-full py-3 bg-[#2A2826] hover:bg-[#33302E] text-white rounded-lg transition text-xs tracking-widest uppercase font-semibold">Log Out</a>
+    </div>
+  </aside>
+
+  <div class="flex-1 flex flex-col overflow-hidden">
+    <header class="h-20 bg-white/80 backdrop-blur-md border-b border-brand-border flex items-center justify-between px-8 z-10 sticky top-0">
+      <div>
+        <h2 class="text-xl font-serif font-semibold text-brand-black">Promotional Campaigns</h2>
+        <p class="text-xs text-gray-500 tracking-wide">Manage discount codes and offers</p>
+      </div>
+    </header>
+
+    <main class="flex-1 overflow-y-auto p-8">
+      <div style="display:none;">
+    <span id="total-orders"></span><span id="summary-revenue"></span><span id="paid-orders"></span><span id="pending-orders"></span><span id="latest-order-name"></span><span id="latest-order-detail"></span>
+    <button id="refresh-orders"></button><button id="export-orders"></button>
+    </div>
+      <div class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-8">
+        
+        <div class="glass-card p-6 lg:col-span-1 h-fit">
+          <h3 class="font-serif text-xl font-semibold mb-6">Create Promotion</h3>
+          <div id="coupon-toast" class="toast" style="background:#C5A880;"></div>
+          <form id="coupon-form" class="space-y-4 text-sm">
+            <div>
+              <label class="block font-semibold text-xs text-gray-500 uppercase tracking-widest mb-1">Coupon Code</label>
+              <input name="code" type="text" placeholder="e.g. SUMMER20" required class="w-full border border-gray-200 rounded-lg px-4 py-2 bg-gray-50 focus:bg-white focus:outline-none focus:border-brand-accent transition uppercase">
+            </div>
+            <div>
+              <label class="block font-semibold text-xs text-gray-500 uppercase tracking-widest mb-1">Discount Type</label>
+              <select name="discount_type" class="w-full border border-gray-200 rounded-lg px-4 py-2 bg-gray-50 focus:bg-white focus:outline-none focus:border-brand-accent transition">
+                <option value="percent">Percentage (%)</option>
+                <option value="fixed">Fixed Amount (৳)</option>
+              </select>
+            </div>
+            <div>
+              <label class="block font-semibold text-xs text-gray-500 uppercase tracking-widest mb-1">Discount Value</label>
+              <input name="discount_value" type="number" min="1" placeholder="e.g. 15" required class="w-full border border-gray-200 rounded-lg px-4 py-2 bg-gray-50 focus:bg-white focus:outline-none focus:border-brand-accent transition">
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+              <div>
+                <label class="block font-semibold text-xs text-gray-500 uppercase tracking-widest mb-1">Min Spend (৳)</label>
+                <input name="min_spend" type="number" min="0" placeholder="0" class="w-full border border-gray-200 rounded-lg px-4 py-2 bg-gray-50 focus:bg-white focus:outline-none focus:border-brand-accent transition">
+              </div>
+              <div>
+                <label class="block font-semibold text-xs text-gray-500 uppercase tracking-widest mb-1">Max Uses</label>
+                <input name="max_uses" type="number" min="0" placeholder="0 = unlimited" class="w-full border border-gray-200 rounded-lg px-4 py-2 bg-gray-50 focus:bg-white focus:outline-none focus:border-brand-accent transition">
+              </div>
+            </div>
+            <div>
+              <label class="block font-semibold text-xs text-gray-500 uppercase tracking-widest mb-1">Expires At</label>
+              <input name="expires_at" type="datetime-local" class="w-full border border-gray-200 rounded-lg px-4 py-2 bg-gray-50 focus:bg-white focus:outline-none focus:border-brand-accent transition text-gray-500">
+            </div>
+            <button type="submit" class="w-full bg-brand-black hover:bg-black text-white font-medium py-3 rounded-lg transition shadow-md shadow-black/10 mt-2">Generate Code</button>
+          </form>
+        </div>
+
+        <div class="glass-card lg:col-span-2 overflow-hidden flex flex-col h-full max-h-[80vh]">
+          <div class="p-6 border-b border-gray-100 flex justify-between items-center bg-white z-10 sticky top-0">
+            <h3 class="font-serif text-xl font-semibold">Active Campaigns</h3>
+            <button type="button" id="refresh-coupons" class="text-xs font-semibold text-gray-500 hover:text-brand-black uppercase tracking-widest transition">Refresh List</button>
+          </div>
+          <div class="overflow-y-auto flex-1">
+            <ul id="coupon-list" class="coupon-list text-sm">
+               <li class="p-8 text-center text-gray-400 italic">Loading promotions...</li>
+            </ul>
+          </div>
+        </div>
+
+      </div>
+    </main>
+  </div>
+<script>
+    async function loadCoupons() {
+      const response = await fetch('/api/coupons');
+      const data = await response.json();
+      const list = document.getElementById('coupon-list');
+      if (!list) return;
+      list.innerHTML = '';
+      data.coupons.forEach(c => {
+        const li = document.createElement('li');
+        li.innerHTML = `
+          <div>
+            <strong>${c.code}</strong><br>
+            <small>${c.discount_type === 'percent' ? c.discount_value + '%' : '৳' + c.discount_value} off | Min spend: ৳${c.min_spend} | Uses: ${c.used_count}/${c.max_uses || 'unlimited'}</small>
+          </div>
+          <div>
+            <span class="badge" style="background: ${c.active ? 'var(--success)' : 'var(--danger)'}; color: ${c.active ? 'var(--success-text)' : 'var(--danger-text)'}">${c.active ? 'Active' : 'Inactive'}</span>
+          </div>
+        `;
+        list.appendChild(li);
+      });
+    }
+
+    const couponForm = document.getElementById('coupon-form');
+    if (couponForm) {
+      couponForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const payload = Object.fromEntries(new FormData(couponForm));
+        payload.discount_value = parseInt(payload.discount_value, 10);
+        payload.min_spend = parseInt(payload.min_spend, 10);
+        payload.max_uses = parseInt(payload.max_uses, 10);
+        
+        try {
+          const res = await fetch('/api/coupons', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(payload)
+          });
+          const data = await res.json();
+          if(!res.ok) throw new Error(data.error);
+          alert('Coupon created');
+          couponForm.reset();
+          loadCoupons();
+        } catch (err) {
+          alert(err.message);
+        }
+      });
+    }
+
+    const refreshCouponsBtn = document.getElementById('refresh-coupons');
+    if (refreshCouponsBtn) {
+       refreshCouponsBtn.addEventListener('click', loadCoupons);
+    }
+    loadCoupons();
+  </script>
+</body>
+</html>

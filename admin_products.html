@@ -1,0 +1,212 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ARAMS — Atelier Catalog</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,400&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: { extend: { fontFamily: { sans: ['"DM Sans"', 'sans-serif'], serif: ['"Cormorant Garamond"', 'serif'] }, colors: { brand: { black: '#12100E', accent: '#C5A880', border: '#E5E5E5' } } } }
+    }
+  </script>
+  <style>
+    body { background-color: #FAFAFA; color: #12100E; }
+    .glass-card { background: white; border: 1px solid #E5E5E5; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.02); }
+    .sidebar-link { transition: all 0.2s; }
+    .sidebar-link:hover { background: #1A1816; color: white; }
+    .sidebar-link.active { background: #1A1816; color: white; border-left: 3px solid #C5A880; }
+    .toast { opacity: 0; transition: opacity 0.3s; position: fixed; bottom: 20px; right: 20px; padding: 12px 24px; border-radius: 8px; color: white; font-weight: bold; z-index: 50; pointer-events: none; }
+    .toast.show { opacity: 1; pointer-events: auto; }
+    
+    /* Utility classes for JS injection to use */
+    .product-list li { display: flex; justify-content: space-between; align-items: center; padding: 16px; border-bottom: 1px solid #F3F4F6; transition: background 0.2s; }
+    .product-list li:hover { background: #F9FAFB; }
+    .product-meta strong { font-family: "Cormorant Garamond", serif; font-size: 1.125rem; font-weight: 600; color: #12100E; display: block; }
+    .product-meta small { color: #6B7280; font-size: 0.75rem; }
+  </style>
+</head>
+<body class="flex h-screen overflow-hidden antialiased">
+  <!-- Sidebar -->
+  <aside class="w-64 bg-brand-black text-gray-300 flex flex-col justify-between hidden md:flex border-r border-[#2A2826]">
+    <div>
+      <div class="h-20 flex items-center px-8 border-b border-[#2A2826]">
+        <h1 class="font-serif text-2xl text-white tracking-widest uppercase">ARAMS<span class="text-brand-accent">.</span></h1>
+      </div>
+      <nav class="mt-8 flex flex-col gap-2 px-4 text-sm font-medium tracking-wide">
+        <p class="px-4 text-xs font-semibold text-gray-500 uppercase tracking-widest mb-2">Management</p>
+        <a href="/admin/dashboard" class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-lg text-gray-300">Dashboard</a>
+        <a href="/admin/orders" class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-lg">Orders</a>
+        <a href="/admin/products" class="sidebar-link active flex items-center gap-3 px-4 py-3 rounded-lg text-white">Catalog</a>
+        <a href="/admin/coupons" class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-lg">Promotions</a>
+      </nav>
+    </div>
+    <div class="p-4 mb-4">
+      <a href="/admin/settings" class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium mb-2">Settings</a>
+      <a href="/admin/logout" class="flex items-center justify-center gap-2 w-full py-3 bg-[#2A2826] hover:bg-[#33302E] text-white rounded-lg transition text-xs tracking-widest uppercase font-semibold">Log Out</a>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <div class="flex-1 flex flex-col overflow-hidden">
+    <header class="h-20 bg-white/80 backdrop-blur-md border-b border-brand-border flex items-center justify-between px-8 z-10 sticky top-0">
+      <div>
+        <h2 class="text-xl font-serif font-semibold text-brand-black">Atelier Catalog</h2>
+        <p class="text-xs text-gray-500 tracking-wide">Manage inventory and collections</p>
+      </div>
+      <div>
+        <button type="button" id="refresh-products-header" class="hidden"></button>
+      </div>
+    </header>
+
+    <main class="flex-1 overflow-y-auto p-8">
+      <div class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-8">
+        
+        <!-- Add Product Form -->
+        <div class="glass-card p-6 lg:col-span-1 h-fit">
+          <h3 class="font-serif text-xl font-semibold mb-6">Piece Details</h3>
+          <div id="product-toast" class="toast" style="background:#C5A880;"></div>
+          <form id="product-form" class="space-y-4 text-sm">
+            <div>
+              <label for="product-id" class="block font-semibold text-xs text-gray-500 uppercase tracking-widest mb-1">Product ID</label>
+              <input id="product-id" name="id" type="text" placeholder="e.g. atlas-aviators" required class="w-full border border-gray-200 rounded-lg px-4 py-2 bg-gray-50 focus:bg-white focus:outline-none focus:border-brand-accent transition">
+            </div>
+            <div>
+              <label for="product-name" class="block font-semibold text-xs text-gray-500 uppercase tracking-widest mb-1">Product Name</label>
+              <input id="product-name" name="name" type="text" placeholder="Atlas Aviators" required class="w-full border border-gray-200 rounded-lg px-4 py-2 bg-gray-50 focus:bg-white focus:outline-none focus:border-brand-accent transition">
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+              <div>
+                <label for="product-price" class="block font-semibold text-xs text-gray-500 uppercase tracking-widest mb-1">Price (৳)</label>
+                <input id="product-price" name="price" type="number" min="1" step="1" required class="w-full border border-gray-200 rounded-lg px-4 py-2 bg-gray-50 focus:bg-white focus:outline-none focus:border-brand-accent transition">
+              </div>
+              <div>
+                <label for="product-stock" class="block font-semibold text-xs text-gray-500 uppercase tracking-widest mb-1">Stock</label>
+                <input id="product-stock" name="stock" type="number" min="0" step="1" value="0" class="w-full border border-gray-200 rounded-lg px-4 py-2 bg-gray-50 focus:bg-white focus:outline-none focus:border-brand-accent transition">
+              </div>
+            </div>
+            <div>
+              <label for="product-color" class="block font-semibold text-xs text-gray-500 uppercase tracking-widest mb-1">Color / Variant</label>
+              <input id="product-color" name="color" type="text" class="w-full border border-gray-200 rounded-lg px-4 py-2 bg-gray-50 focus:bg-white focus:outline-none focus:border-brand-accent transition">
+            </div>
+            <div>
+              <label for="product-description" class="block font-semibold text-xs text-gray-500 uppercase tracking-widest mb-1">Description</label>
+              <textarea id="product-description" name="description" rows="3" class="w-full border border-gray-200 rounded-lg px-4 py-2 bg-gray-50 focus:bg-white focus:outline-none focus:border-brand-accent transition resize-none"></textarea>
+            </div>
+            <div>
+              <label for="product-image" class="block font-semibold text-xs text-gray-500 uppercase tracking-widest mb-1">Image URLs (comma-separated)</label>
+              <textarea id="product-image" name="image" rows="2" class="w-full border border-gray-200 rounded-lg px-4 py-2 bg-gray-50 focus:bg-white focus:outline-none focus:border-brand-accent transition resize-none"></textarea>
+            </div>
+            <button type="submit" class="w-full bg-brand-black hover:bg-black text-white font-medium py-3 rounded-lg transition shadow-md shadow-black/10 mt-2">Save Piece</button>
+          </form>
+        </div>
+
+        <!-- Product List -->
+        <div class="glass-card lg:col-span-2 overflow-hidden flex flex-col h-full max-h-[80vh]">
+          <div class="p-6 border-b border-gray-100 flex justify-between items-center bg-white z-10 sticky top-0">
+            <h3 class="font-serif text-xl font-semibold">Active Collection</h3>
+            <button type="button" id="refresh-products" class="text-xs font-semibold text-gray-500 hover:text-brand-black uppercase tracking-widest transition">Refresh List</button>
+          </div>
+          <div class="overflow-y-auto flex-1">
+            <ul id="product-list" class="product-list text-sm">
+               <li class="p-8 text-center text-gray-400 italic">Loading catalog...</li>
+            </ul>
+          </div>
+        </div>
+
+      </div>
+    </main>
+  </div>
+<script>
+    const productToast = document.getElementById('product-toast');
+    const productForm = document.getElementById('product-form');
+    const productIdInput = document.getElementById('product-id');
+    const productSubmitButton = productForm.querySelector('button[type="submit"]');
+    let editingProductId = null;
+    
+    function showToast(message, isError = false) {
+      productToast.textContent = message;
+      productToast.style.background = isError ? 'var(--danger)' : 'var(--success)';
+      productToast.style.color = isError ? 'var(--danger-text)' : 'var(--success-text)';
+      productToast.classList.add('show');
+      setTimeout(() => productToast.classList.remove('show'), 3000);
+    }
+    
+    async function loadProducts() {
+      const response = await fetch('/api/products');
+      const data = await response.json();
+      const list = document.getElementById('product-list');
+      list.innerHTML = '';
+      data.products.forEach(p => {
+        const li = document.createElement('li');
+        li.innerHTML = `
+          <div>
+            <strong>${p.name}</strong> (${p.id})<br>
+            <small>৳${p.price} | Stock: ${p.stock}</small>
+          </div>
+          <div>
+            <button class="edit-btn" data-id="${p.id}">Edit</button>
+            <button class="delete-btn" data-id="${p.id}" style="color:var(--danger-text)">Delete</button>
+          </div>
+        `;
+        list.appendChild(li);
+      });
+      document.querySelectorAll('.delete-btn').forEach(btn => {
+        btn.addEventListener('click', async (e) => {
+          if(!confirm('Delete product?')) return;
+          await fetch(`/api/products/${e.target.dataset.id}`, {method: 'DELETE'});
+          loadProducts();
+        });
+      });
+      document.querySelectorAll('.edit-btn').forEach(btn => {
+        btn.addEventListener('click', async (e) => {
+          const id = e.target.dataset.id;
+          const p = data.products.find(x => x.id === id);
+          if(p) {
+             editingProductId = id;
+             productIdInput.value = p.id;
+             document.getElementById('product-name').value = p.name;
+             document.getElementById('product-price').value = p.price;
+             document.getElementById('product-stock').value = p.stock;
+             document.getElementById('product-color').value = p.color;
+             document.getElementById('product-description').value = p.description;
+             document.getElementById('product-image').value = p.image;
+             productSubmitButton.textContent = 'Update product';
+          }
+        });
+      });
+    }
+
+    productForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const payload = Object.fromEntries(new FormData(productForm));
+      payload.price = parseInt(payload.price, 10);
+      payload.stock = parseInt(payload.stock, 10) || 0;
+      
+      const method = editingProductId ? 'PATCH' : 'POST';
+      const url = editingProductId ? `/api/products/${editingProductId}` : '/api/products';
+      
+      try {
+        const res = await fetch(url, {
+          method,
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        if(!res.ok) throw new Error(data.error);
+        showToast(editingProductId ? 'Product updated' : 'Product added');
+        productForm.reset();
+        editingProductId = null;
+        productSubmitButton.textContent = 'Add product';
+        loadProducts();
+      } catch (err) {
+        showToast(err.message, true);
+      }
+    });
+
+    document.getElementById('refresh-products-header').addEventListener('click', loadProducts);
+    loadProducts();
+  </script>
+</body>
+</html>

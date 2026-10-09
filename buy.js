@@ -78,13 +78,17 @@ const gorurPants = [
 }));
 products.push(...gorurPants);
 const bestSellingPerfumes = [
-  ["perfume-001", "Rasasi Hawas Ice EDP for Men 100ml", 3100, "Full bottle", "https://images.unsplash.com/photo-1541643600914-78b084683601?auto=format&fit=crop&w=900&q=80", "A cool, fresh scent with a crisp citrus finish and long-lasting character."],
-  ["perfume-002", "Karus Gold Absolu by Khadlaj EDP 100ml", 3150, "Full bottle", "https://images.unsplash.com/photo-1528740561666-dc2479dc08ab?auto=format&fit=crop&w=900&q=80", "A warm perfume profile with a refined premium trail and smooth richness."],
-  ["perfume-003", "Al Rehab Choco Musk - Eau De Spray Perfume (50 ml)", 850, "Full bottle", "https://images.unsplash.com/photo-1594035910387-fea47794261f?auto=format&fit=crop&w=900&q=80", "Soft, sweet, and comforting with a gentle musky finish that feels easy to wear."],
-  ["perfume-004", "Rasasi Hawas Fire EDP 100ml", 3999, "Full bottle", "https://images.unsplash.com/photo-1617897903246-719242758050?auto=format&fit=crop&w=900&q=80", "Bold and spicy with a confident profile built for evenings and special occasions."],
-  ["perfume-005", "Lattafa Atlas Eau De Parfum 55ml", 3150, "Full bottle", "https://images.unsplash.com/photo-1585386959984-a4155224a1ad?auto=format&fit=crop&w=900&q=80", "Fresh marine notes with a modern, clean finish that stays polished all day."],
-  ["perfume-007", "Rayhaan Aquatica EDP 100ml", 2650, "Full bottle", "https://images.unsplash.com/photo-1523293182086-7651a899d37f?auto=format&fit=crop&w=900&q=80", "A tropical, clean signature with a smooth aquatic feel and lasting freshness."],
-  ["perfume-008", "Our Moment by One Direction For Women 50ml", 999, "Full bottle", "https://images.unsplash.com/photo-1528740561666-dc2479dc08ab?auto=format&fit=crop&w=900&q=80", "A sweet, soft fragrance with a light and youthful finish for everyday elegance."]
+  ["perfume-001", "Arabiyat Oud al Layl Midnight Edition EDP 100ml", 1850, "Full bottle", "https://images.unsplash.com/photo-1541643600914-78b084683601?auto=format&fit=crop&w=900&q=80", "Bold Unisex Fragrance. Top Notes: Saffron, Rose. Middle Notes: Amber, Woody Notes. Base Notes: Oud, Musk. Perfect for evening wear."],
+  ["perfume-002", "Tad Angel Attractive EDP Men 100ml", 1650, "Full bottle", "https://images.unsplash.com/photo-1528740561666-dc2479dc08ab?auto=format&fit=crop&w=900&q=80", "A masculine, bold Arabian perfume. Features rich spicy top notes fading into a fresh aquatic heart with a deep woody base."],
+  ["perfume-003", "Vampire Blood Perfume Oil (Euro Valley)", 850, "Full bottle", "https://images.unsplash.com/photo-1594035910387-fea47794261f?auto=format&fit=crop&w=900&q=80", "Intense Attar/Perfume Oil. A rich, dark, and sweet fragrance with deep red rose, sandalwood, and musk. Alcohol-free."],
+  ["perfume-004", "Brandy Perfumes Sunset EDP 100ml", 1450, "Full bottle", "https://images.unsplash.com/photo-1617897903246-719242758050?auto=format&fit=crop&w=900&q=80", "A beautiful evening scent reflecting the golden hour. Top Notes: Citrus, Peach. Middle: White Flowers. Base: Vanilla, Amber."],
+  ["perfume-005", "Jean Lowe Azure by Maison Alhambra EDP 100ml", 3500, "Full bottle", "https://images.unsplash.com/photo-1585386959984-a4155224a1ad?auto=format&fit=crop&w=900&q=80", "A luxurious men's fragrance. Top Notes: Bergamot, Grapefruit. Middle: Ginger, Mint. Base: Vetiver, Cedarwood, Amber."],
+  ["perfume-006", "Swiss Arabian Shaghaf Oud Ahmar 75ml", 4200, "Full bottle", "https://images.unsplash.com/photo-1523293182086-7651a899d37f?auto=format&fit=crop&w=900&q=80", "A warm, sweet and woody masterpiece. Features notes of sweet melon, amber, vanilla, and premium oud."],
+  ["perfume-007", "Rasasi Hawas Ice EDP for Men 100ml", 3100, "Full bottle", "https://images.unsplash.com/photo-1528740561666-dc2479dc08ab?auto=format&fit=crop&w=900&q=80", "A cool, fresh scent with a crisp citrus finish. Top Notes: Bergamot, Lemon. Middle: Melon, Violet. Base: Musk, Cedar."],
+  ["perfume-008", "Maison Francis Kurkdjian Baccarat Rouge 540 EDP", 32500, "Full bottle", "https://images.unsplash.com/photo-1594035910387-fea47794261f?auto=format&fit=crop&w=900&q=80", "Iconic Unisex Niche Perfume. A luminous, sophisticated amber floral and woody breeze. Top Notes: Saffron, Jasmine. Middle: Amberwood. Base: Fir Resin, Cedar."],
+  ["perfume-009", "Parfums de Marly Layton EDP for Men 125ml", 24500, "Full bottle", "https://images.unsplash.com/photo-1585386959984-a4155224a1ad?auto=format&fit=crop&w=900&q=80", "Distinguished Masculine Luxury. A refined blend of fresh fruit and warm spices. Top Notes: Apple, Bergamot, Lavender. Middle: Jasmine, Violet. Base: Vanilla, Pepper, Guaiac Wood."],
+  ["perfume-010", "Xerjoff Erba Pura EDP Unisex 100ml", 21000, "Full bottle", "https://images.unsplash.com/photo-1523293182086-7651a899d37f?auto=format&fit=crop&w=900&q=80", "Vibrant Fruity-Musky Masterpiece. An indulgent elixir of fruits and amber. Top Notes: Sicilian Orange, Calabrian Bergamot. Middle: Fruity Notes. Base: White Musk, Madagascar Vanilla."],
+  ["perfume-011", "Amouage Interlude Man EDP 100ml", 28000, "Full bottle", "https://images.unsplash.com/photo-1617897903246-719242758050?auto=format&fit=crop&w=900&q=80", "The Blue Beast. A powerful, spicy-woody and balsamic experience. Top Notes: Bergamot, Oregano. Middle: Amber, Frankincense. Base: Leather, Agarwood (Oud), Sandalwood."]
 ].map(([id, name, price, color, image, description]) => ({
   id,
   name,
@@ -298,28 +302,90 @@ document.querySelector("#buy-form").addEventListener("submit", async (event) => 
   const originalText = submitButton.textContent;
 
   submitButton.disabled = true;
-  submitButton.textContent = "Sending...";
+  submitButton.textContent = "Processing...";
 
   try {
+    const payload = {
+      customer: Object.fromEntries(formData.entries()),
+      items: entries.map(({ product, quantity }) => ({ id: product.id, quantity }))
+    };
+    if (appliedCoupon && appliedCoupon.code) {
+      payload.customer.coupon_code = appliedCoupon.code;
+    }
+
     const response = await fetch("/api/orders", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        customer: Object.fromEntries(formData.entries()),
-        items: entries.map(({ product, quantity }) => ({ id: product.id, quantity }))
-      })
+      body: JSON.stringify(payload)
     });
 
     const result = await response.json();
     if (!response.ok) throw new Error(result.error || "Could not place your order.");
 
-    window.location.href = result.whatsapp_url;
+    cart.clear();
+    appliedCoupon = null;
+    const couponInput = document.querySelector("#checkout-coupon");
+    if(couponInput) couponInput.value = "";
+    const couponMsg = document.querySelector("#coupon-message");
+    if(couponMsg) couponMsg.textContent = "";
+
+    renderSummary();
+    form.reset();
+
+    // Show success dialog
+    document.querySelector("#success-reference").textContent = result.reference;
+    document.querySelector("#success-dialog").showModal();
+    showToast(`Order ${result.reference} confirmed successfully!`);
+
   } catch (error) {
     showToast(error.message || "Could not place your order.");
   } finally {
     submitButton.disabled = false;
     submitButton.textContent = originalText;
   }
+});
+
+let appliedCoupon = null;
+document.querySelector("#apply-coupon")?.addEventListener("click", async () => {
+  const code = document.querySelector("#checkout-coupon").value.trim();
+  const messageEl = document.querySelector("#coupon-message");
+  if (!code) {
+    messageEl.textContent = "Please enter a code.";
+    messageEl.style.color = "var(--danger-text)";
+    return;
+  }
+  const entries = orderEntries();
+  const orderTotal = entries.reduce((sum, entry) => sum + entry.product.price * entry.quantity, 0);
+
+  try {
+    const res = await fetch("/api/coupons/validate", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ code, subtotal: orderTotal })
+    });
+    const data = await res.json();
+    if (!res.ok || !data.valid) {
+      throw new Error(data.error || "Invalid coupon.");
+    }
+    appliedCoupon = data;
+    messageEl.textContent = data.message;
+    messageEl.style.color = "var(--success-text)";
+    document.querySelector("#summary-total").innerHTML = `<del style="color:var(--muted); font-size: 0.9em; margin-right:6px">৳${orderTotal.toLocaleString('en-BD')}</del> ৳${data.final_total.toLocaleString('en-BD')}`;
+  } catch (err) {
+    appliedCoupon = null;
+    messageEl.textContent = err.message;
+    messageEl.style.color = "var(--danger-text)";
+    document.querySelector("#summary-total").textContent = `৳${orderTotal.toLocaleString('en-BD')}`;
+  }
+});
+
+// Success dialog event listeners
+document.querySelector("#close-success")?.addEventListener("click", () => {
+  document.querySelector("#success-dialog").close();
+});
+document.querySelector("#success-continue")?.addEventListener("click", () => {
+  document.querySelector("#success-dialog").close();
+  window.location.href = "/";
 });
 
 renderProducts();

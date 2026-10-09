@@ -7,7 +7,7 @@
   <title>Product | ARAMS</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,400;1,600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/styles.css">
   <script src="/product.js" defer></script>
 </head>
@@ -32,15 +32,16 @@
         </div>
         <div class="product-thumbnail-row" id="product-thumbnail-row" aria-label="Product gallery"></div>
       </div>
-      <div class="product-detail-copy">
+      <div class="product-detail-copy" style="animation: rise-in 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) both; animation-delay: 0.1s;">
         <p class="eyebrow">Everyday selection</p>
         <h1 id="product-name">Product</h1>
         <div class="product-price-block"><strong id="product-price">&#2547;0</strong><span id="product-color">Available now</span></div>
         <p class="product-lead" id="product-description">Product details from ARAMS.</p>
         <div class="product-offer"><strong>CASH ON DELIVERY</strong><span>Delivery across Bangladesh. Confirm your delivery details with ARAMS on WhatsApp.</span></div>
         <form class="product-order-form" id="product-order-form">
+          <label id="size-container" style="display: none;">Size<select name="size" id="product-size"><option value="" disabled selected>Select Size</option></select></label>
           <label>Quantity<select name="quantity"><option value="1">1</option><option value="2">2</option><option value="3">3</option></select></label>
-          <button class="product-buy-button" type="submit">Order on WhatsApp <span aria-hidden="true">&#8594;</span></button>
+          <button class="product-buy-button" type="submit">Buy Now <span aria-hidden="true">&#8594;</span></button>
         </form>
         <div class="product-benefits">
           <div><strong>01</strong><span>Authentic ARAMS catalog listing</span></div>
@@ -51,6 +52,44 @@
       </div>
     </section>
   </main>
+
+  <dialog class="checkout-dialog" id="checkout-dialog" aria-labelledby="checkout-title">
+    <form id="checkout-form">
+      <div class="drawer-heading">
+        <div><p class="eyebrow">Almost yours</p><h2 id="checkout-title">Your details</h2></div>
+        <button class="close-button" id="close-checkout" type="button" aria-label="Close order form">×</button>
+      </div>
+      <p class="form-intro">Enter your details to finalize your order.</p>
+      <div class="checkout-items" id="checkout-items" aria-live="polite"></div>
+      <label class="form-field">Full name<input name="name" autocomplete="name" required></label>
+      <label class="form-field">Phone number<input name="phone" type="tel" autocomplete="tel" required></label>
+      <label class="form-field">Email address <span>(optional)</span><input name="email" type="email" autocomplete="email"></label>
+      <label class="form-field">Delivery or pickup details<textarea name="notes" rows="3" placeholder="Address, pickup preference, or anything else" required></textarea></label>
+      <div class="coupon-section" style="display:flex; gap:8px; margin-bottom: 0.5rem; align-items:center;">
+        <input id="checkout-coupon" name="coupon_code" type="text" placeholder="Promo code" style="flex:1; border: 1px solid var(--line); border-radius: 8px; padding: 10px; font-size: 14px; text-transform: uppercase;">
+        <button id="apply-coupon" type="button" style="border: 1px solid var(--line); background: var(--paper); border-radius: 8px; padding: 10px 16px; font-weight: 600; cursor: pointer;">Apply</button>
+      </div>
+      <div id="coupon-message" style="font-size: 13px; margin-bottom: 12px; font-weight: 600;"></div>
+      <div class="order-total"><span>Order total</span><strong id="checkout-total">৳0</strong></div>
+      <button class="checkout-button" type="submit">Place Order <span aria-hidden="true">→</span></button>
+      <p class="form-footnote">Your order will be securely processed and saved directly on our website.</p>
+    </form>
+  </dialog>
+
+  <dialog class="checkout-dialog" id="success-dialog" aria-labelledby="success-title">
+    <div class="drawer-heading">
+      <div><p class="eyebrow">Order Confirmed</p><h2 id="success-title">Thank You!</h2></div>
+      <button class="close-button" id="close-success" type="button" aria-label="Close success message">×</button>
+    </div>
+    <div style="padding: 2rem 1.5rem; text-align: center;">
+      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#28a745" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom: 1rem; margin-inline: auto;"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+      <h3 style="font-size: 1.5rem; margin-bottom: 0.5rem; font-family: var(--font-display);">Your order is complete.</h3>
+      <p style="color: var(--text-muted); margin-bottom: 1.5rem;">Order Reference: <strong id="success-reference" style="color: var(--text-main);"></strong></p>
+      <p style="color: var(--text-muted); margin-bottom: 2rem;">We will contact you shortly to confirm delivery details.</p>
+      <button class="checkout-button" id="success-continue" type="button" style="width: 100%;">Continue Shopping</button>
+    </div>
+  </dialog>
+
   <div class="product-toast" id="product-toast" role="status" aria-live="polite"></div>
 </body>
 </html>

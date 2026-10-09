@@ -47,14 +47,14 @@ const productGalleryMap = {
 };
 
 const parseGalleryFromUrl = () => {
-  const rawImages = params.get("images");
+  const rawImages = params.get("images") || params.get("image");
   if (!rawImages) return null;
   try {
     const parsed = JSON.parse(rawImages);
     if (Array.isArray(parsed) && parsed.length) return parsed.filter(Boolean);
   } catch (error) {
-    if (rawImages.includes("||")) return rawImages.split("||").filter(Boolean);
-    if (rawImages.includes(",")) return rawImages.split(",").filter(Boolean);
+    if (rawImages.includes("||")) return rawImages.split("||").map(s => s.trim()).filter(Boolean);
+    if (rawImages.includes(",")) return rawImages.split(",").map(s => s.trim()).filter(Boolean);
   }
   return null;
 };
@@ -105,31 +105,168 @@ if (thumbnailRow) {
   });
 }
 
-form.addEventListener("submit", async (event) => {
+const checkoutDialog = document.querySelector("#checkout-dialog");
+const successDialog = document.querySelector("#success-dialog");
+const checkoutForm = document.querySelector("#checkout-form");
+const closeCheckoutBtn = document.querySelector("#close-checkout");
+const closeSuccessBtn = document.querySelector("#close-success");
+const successContinueBtn = document.querySelector("#success-continue");
+const checkoutTotal = document.querySelector("#checkout-total");
+const successReference = document.querySelector("#success-reference");
+const applyCouponBtn = document.querySelector("#apply-coupon");
+const couponInput = document.querySelector("#checkout-coupon");
+const couponMessage = document.querySelector("#coupon-message");
+
+let pendingQuantity = 1;
+
+form.addEventListener("submit", (event) => {
   event.preventDefault();
-  const button = form.querySelector("button");
-  const quantity = Number(new FormData(form).get("quantity"));
-  const originalText = button.textContent;
-  button.disabled = true;
-  button.textContent = "Preparing order...";
-  try {
-    const response = await fetch("/api/orders", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        customer: { name: "Product page customer", phone: "Pending confirmation", email: "", notes: "Please confirm delivery details on WhatsApp." },
-        items: [{ id: productId, quantity }]
-      })
-    });
-    const result = await response.json();
-    if (!response.ok) throw new Error(result.error || "Could not prepare the order.");
-    window.location.href = result.whatsapp_url;
-  } catch (error) {
-    toast.textContent = error.message;
-    toast.classList.add("is-visible");
-    setTimeout(() => toast.classList.remove("is-visible"), 3000);
-  } finally {
-    button.disabled = false;
-    button.textContent = originalText;
+  pendingQuantity = Number(new FormData(form).get("quantity"));
+  
+  if (checkoutDialog) {
+    const total = pendingQuantity * productPrice;
+    checkoutTotal.textContent = currency(total);
+    checkoutDialog.showModal();
   }
 });
+
+if (closeCheckoutBtn) closeCheckoutBtn.addEventListener("click", () => checkoutDialog.close());
+if (closeSuccessBtn) closeSuccessBtn.addEventListener("click", () => successDialog.close());
+if (successContinueBtn) {
+  successContinueBtn.addEventListener("click", () => {
+    successDialog.close();
+    window.location.href = '/';
+  });
+}
+
+if (checkoutForm) {
+  checkoutForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const submitBtn = checkoutForm.querySelector('button[type="submit"]');
+    const originalText = submitBtn.textContent;
+    submitBtn.disabled = true;
+    submitBtn.textContent = "Processing...";
+    
+    const formData = new FormData(checkoutForm);
+    const customerData = Object.fromEntries(formData.entries());
+    const couponCode = customerData.coupon_code || "";
+    
+    try {
+      const response = await fetch("/api/orders", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          customer: { 
+            name: customerData.name, 
+            phone: customerData.phone, 
+            email: customerData.email, 
+            notes: customerData.notes 
+          },
+          items: [{ id: productId, quantity: pendingQuantity }],
+          coupon_code: couponCode
+        })
+      });
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.error || "Could not place the order.");
+      
+      checkoutDialog.close();
+      if (successReference) successReference.textContent = result.reference || "CONFIRMED";
+      if (successDialog) successDialog.showModal();
+      checkoutForm.reset();
+    } catch (error) {
+      toast.textContent = error.message;
+      toast.classList.add("is-visible");
+      setTimeout(() => toast.classList.remove("is-visible"), 3000);
+    } finally {
+      submitBtn.disabled = false;
+      submitBtn.textContent = originalText;
+    }
+  });
+}
+
+if (applyCouponBtn) {
+  applyCouponBtn.addEventListener("click", async () => {
+    const code = couponInput.value.trim();
+    if (!code) return;
+    
+    try {
+      const res = await fetch("/api/coupons/validate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          coupon_code: code,
+          items: [{ id: productId, quantity: pendingQuantity }]
+        })
+      });
+      const data = await res.json();
+      if (res.ok && data.valid) {
+        couponMessage.textContent = `Coupon applied! Discount: ${currency(data.discount_amount)}`;
+        couponMessage.style.color = "green";
+        const newTotal = (pendingQuantity * productPrice) - data.discount_amount;
+        checkoutTotal.textContent = currency(newTotal > 0 ? newTotal : 0);
+      } else {
+        couponMessage.textContent = data.error || "Invalid coupon";
+        couponMessage.style.color = "red";
+        checkoutTotal.textContent = currency(pendingQuantity * productPrice);
+      }
+    } catch (e) {
+      couponMessage.textContent = "Error validating coupon";
+      couponMessage.style.color = "red";
+    }
+  });
+}
+const sizeContainer = document.querySelector("#size-container");
+const sizeSelect = document.querySelector("#product-size");
+
+const isClothing = productId && (productId.startsWith("katua-") || productId.startsWith("gorur-pants-") || productId.startsWith("gorur-polo-") || productId === "mens-trousers" || productId === "everyday-shirt" || productId === "mens-shorts" || productId.includes("trousers") || productId.includes("pants"));
+let selectedSize = "";
+
+if (isClothing && sizeContainer && sizeSelect) {
+  sizeContainer.style.display = "grid";
+  const sizes = ["S", "M", "L", "XL", "XXL"];
+  if (productId.includes("pants") || productId.includes("trousers")) {
+    sizes.splice(0, sizes.length, "28", "30", "32", "34", "36", "38");
+  }
+  
+  sizes.forEach(size => {
+    const option = document.createElement("option");
+    option.value = size;
+    option.textContent = size;
+    sizeSelect.appendChild(option);
+  });
+}
+
+// Sticky Mobile Buy Bar
+const stickyBar = document.querySelector("#mobile-sticky-buy");
+const stickyName = document.querySelector("#sticky-name");
+const stickyPrice = document.querySelector("#sticky-price");
+const stickyBtn = document.querySelector("#sticky-buy-btn");
+const mainBuyBtn = document.querySelector(".product-buy-button");
+
+if (stickyBar && mainBuyBtn) {
+  stickyName.textContent = productName;
+  stickyPrice.textContent = currency(productPrice);
+  
+  const observer = new IntersectionObserver((entries) => {
+    const mainBtnEntry = entries[0];
+    if (!mainBtnEntry.isIntersecting && mainBtnEntry.boundingClientRect.top < 0) {
+      stickyBar.classList.add("is-visible");
+    } else {
+      stickyBar.classList.remove("is-visible");
+    }
+  }, { threshold: 0 });
+  
+  observer.observe(mainBuyBtn);
+  
+  stickyBtn.addEventListener("click", () => {
+    // Scroll up to the form or open checkout directly
+    if (isClothing && sizeSelect.value === "") {
+      document.querySelector(".product-detail-copy").scrollIntoView({ behavior: "smooth" });
+      toast.textContent = "Please select a size first.";
+      toast.classList.add("is-visible");
+      setTimeout(() => toast.classList.remove("is-visible"), 3000);
+    } else {
+      form.dispatchEvent(new Event("submit", { cancelable: true, bubbles: true }));
+    }
+  });
+}

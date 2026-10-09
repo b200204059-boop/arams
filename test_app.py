@@ -164,12 +164,12 @@ class BuildOrderTests(unittest.TestCase):
         names = [name for _, name, _ in app.PERFUME_PRODUCTS]
 
         self.assertIn("Rasasi Hawas Ice EDP for Men 100ml", names)
-        self.assertIn("Rasasi Hawas Fire EDP 100ml", names)
-        self.assertIn("Lattafa Atlas Eau De Parfum 55ml", names)
-        self.assertIn("Al Rehab Choco Musk - Eau De Spray Perfume (50 ml)", names)
+        self.assertIn("Maison Francis Kurkdjian Baccarat Rouge 540 EDP", names)
+        self.assertIn("Parfums de Marly Layton EDP for Men 125ml", names)
+        self.assertIn("Amouage Interlude Man EDP 100ml", names)
         self.assertNotIn("Rasasi Fattan Men 50ml EDP", names)
-        self.assertEqual(app.perfume_details("perfume-007"), ("Rayhaan Aquatica EDP 100ml", 2650))
-        self.assertIsNone(app.perfume_details("perfume-006"))
+        self.assertEqual(app.perfume_details("perfume-008"), ("Maison Francis Kurkdjian Baccarat Rouge 540 EDP", 32500))
+        self.assertEqual(app.perfume_details("perfume-011"), ("Amouage Interlude Man EDP 100ml", 28000))
 
     def test_admin_can_add_custom_product_to_catalog(self):
         custom_id = "portal-led-product"
@@ -312,8 +312,13 @@ class BuildOrderTests(unittest.TestCase):
         self.assertTrue(any("Sola Frames" in p["name"] for p in data["products"]))
 
     def test_verify_admin_password_supports_plain_and_hash(self):
-        self.assertTrue(app.verify_admin_password("admin123"))
-        self.assertFalse(app.verify_admin_password("wrong-password"))
+        original = app.ADMIN_PASSWORD
+        try:
+            app.ADMIN_PASSWORD = "admin123"
+            self.assertTrue(app.verify_admin_password("admin123"))
+            self.assertFalse(app.verify_admin_password("wrong-password"))
+        finally:
+            app.ADMIN_PASSWORD = original
 
 
 if __name__ == "__main__":

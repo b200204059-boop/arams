@@ -11,7 +11,7 @@
   --stone: #e7dccd;
   --gold: #b67d4f;
   --amber: #cf8d5d;
-  --display: "Manrope", sans-serif;
+  --display: "Playfair Display", serif;
   --body: "DM Sans", sans-serif;
 }
 
@@ -172,7 +172,8 @@ button { color: inherit; }
 .hero-copy > .text-link { margin-top: 27px; }
 .hero-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 27px; }
 .hero-cta, .hero-secondary { min-height: 44px; display: inline-flex; align-items: center; justify-content: center; gap: 14px; padding: 0 16px; font-size: 11px; font-weight: 600; transition: transform .2s ease, box-shadow .2s ease; }
-.hero-cta { background: linear-gradient(135deg, #ff8d67 0%, #ef5d43 38%, #cf3329 100%); color: var(--white); box-shadow: 0 16px 32px rgba(255,103,76,.34); }
+.hero-cta { background: linear-gradient(135deg, #ff8d67 0%, #ef5d43 38%, #cf3329 100%); color: var(--white); box-shadow: 0 16px 32px rgba(255,103,76,.34); background-size: 200% 200%; animation: gradient-shift 3s ease infinite; }
+@keyframes gradient-shift { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
 .hero-cta span { font-size: 17px; }
 .hero-secondary { border: 1px solid rgba(255,255,255,.2); background: rgba(245,239,232,.12); }
 .hero-cta:hover, .hero-secondary:hover { transform: translateY(-1px); }
@@ -235,8 +236,8 @@ button { color: inherit; }
 .search-empty-state { grid-column: 1 / -1; padding: 42px 20px; border: 1px solid var(--line); text-align: center; }
 .search-empty-state p { margin: 0 0 14px; color: var(--muted); font-size: 14px; }
 .search-empty-state button { min-height: 38px; border: 0; padding: 0 16px; background: var(--ink); color: var(--white); font: inherit; font-size: 12px; cursor: pointer; }
-.product-card { min-width: 0; cursor: pointer; animation: rise-in .45s both; transition: transform .2s ease, box-shadow .2s ease; border-radius: 22px; overflow: hidden; background: linear-gradient(180deg, rgba(255,255,255,0.72) 0%, rgba(243,233,223,0.88) 100%); border: 1px solid rgba(76,54,42,.08); box-shadow: 0 18px 30px rgba(66,49,37,.03); }
-.product-card:hover { transform: translateY(-3px); box-shadow: 0 20px 38px rgba(75,52,39,.08); }
+.product-card { min-width: 0; cursor: pointer; animation: rise-in .45s both; transition: transform .3s cubic-bezier(.2,.8,.2,1), box-shadow .3s ease, border-color .3s ease; border-radius: 22px; overflow: hidden; background: linear-gradient(180deg, rgba(255,255,255,0.72) 0%, rgba(243,233,223,0.88) 100%); border: 1px solid rgba(76,54,42,.08); box-shadow: 0 18px 30px rgba(66,49,37,.03); }
+.product-card:hover { transform: translateY(-6px); box-shadow: 0 24px 48px rgba(75,52,39,.15); border-color: rgba(76,54,42,.25); }
 .product-image-wrap { position: relative; aspect-ratio: 1 / 1.18; overflow: hidden; background: #f1f1ef; border-radius: 18px; box-shadow: inset 0 0 0 1px rgba(17,17,17,.04); }
 .product-image { width: 100%; height: 100%; display: block; object-fit: cover; transition: transform .55s cubic-bezier(.2,.7,.2,1); }
 .product-card:hover .product-image { transform: scale(1.035); }
@@ -455,6 +456,12 @@ button { color: inherit; }
   border-radius: 20px;
   background: linear-gradient(180deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.02) 100%);
   box-shadow: 0 12px 26px rgba(17, 17, 17, 0.04);
+  transition: transform .3s ease, box-shadow .3s ease, border-color .3s ease;
+}
+.preview-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 24px 48px rgba(17, 17, 17, 0.12);
+  border-color: rgba(255,255,255,0.15);
 }
 .preview-card img {
   display: block;
@@ -750,7 +757,8 @@ button { color: inherit; }
 .product-detail-layout { display: grid; grid-template-columns: minmax(0, 1.08fr) minmax(340px, .92fr); gap: clamp(34px, 6vw, 82px); align-items: start; }
 .product-gallery { min-width: 0; }
 .product-main-image { position: relative; aspect-ratio: 1 / 1.08; overflow: hidden; background: #e8e8e4; }
-.product-main-image img { width: 100%; height: 100%; display: block; object-fit: cover; }
+.product-main-image img { width: 100%; height: 100%; display: block; object-fit: cover; transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1); cursor: zoom-in; }
+.product-main-image:hover img { transform: scale(1.15); }
 .product-gallery-badge { position: absolute; top: 16px; left: 16px; padding: 8px 11px; background: var(--white); font-size: 10px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
 .product-thumbnail-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 10px; }
 .product-thumb { width: 100%; aspect-ratio: 1 / .84; overflow: hidden; border: 1px solid transparent; background: #ecece8; cursor: pointer; padding: 0; }
@@ -2314,4 +2322,49 @@ button { color: inherit; }
   .lookbook-visual img {
     height: 440px;
   }
-}
+}
+
+.floating-wa {
+  position: fixed;
+  bottom: 24px;
+  left: 24px;
+  background: #25D366;
+  color: white;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 12px 24px rgba(37, 211, 102, 0.3);
+  z-index: 1000;
+  transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s ease;
+}
+.floating-wa:hover {
+  transform: scale(1.1);
+  box-shadow: 0 16px 32px rgba(37, 211, 102, 0.4);
+}
+
+/* Mobile Sticky Buy Bar */
+.mobile-sticky-buy {
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 12px 20px;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border-top: 1px solid var(--line);
+  box-shadow: 0 -10px 30px rgba(0,0,0,0.08);
+  z-index: 100;
+  transform: translateY(110%);
+  transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.mobile-sticky-buy.is-visible { transform: translateY(0); }
+.mobile-sticky-buy .sticky-info { display: flex; flex-direction: column; gap: 2px; }
+.mobile-sticky-buy strong { font-family: var(--display); font-size: 16px; margin: 0; color: var(--ink); }
+.mobile-sticky-buy span { color: var(--muted); font-size: 12px; font-weight: 600; }
+.mobile-sticky-buy button { background: var(--ink); color: var(--white); border: 0; padding: 12px 28px; border-radius: 999px; font-weight: 700; font-size: 13px; cursor: pointer; transition: background 0.2s; }
+.mobile-sticky-buy button:hover { background: var(--red); }
+@media (min-width: 761px) {
+  .mobile-sticky-buy { display: none !important; }
+}
